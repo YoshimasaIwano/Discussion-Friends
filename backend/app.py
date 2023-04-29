@@ -4,7 +4,7 @@ from google.cloud import storage
 import os
 
 from speech_to_text import audio_to_text
-from ai_agent_return import chat_gpt_debater
+from chat import chat_gpt_debater
 from conversation_summary import summarize_conversation
 
 app = Flask(__name__, static_folder='./build', static_url_path='/')
