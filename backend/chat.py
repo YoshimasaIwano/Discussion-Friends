@@ -11,7 +11,7 @@ messages = [
 
 ]
 
-user_input_json = "/Users/kaiyuyokoi/Desktop/treasureHack/Discussion-Friends/backend/test.json"
+# user_input_json = "/Users/kaiyuyokoi/Desktop/treasureHack/Discussion-Friends/backend/test.json"
 def chat_gpt_debater(user_input_json, messages):
     # Load user input from JSON file
     with open(user_input_json, "r") as json_file:
@@ -41,5 +41,5 @@ def chat_gpt_debater(user_input_json, messages):
     print(ai_response_json)
     return json.dumps(ai_response_json)
 
-haha = chat_gpt_debater(user_input_json, messages)
-print(haha)
+# haha = chat_gpt_debater(user_input_json, messages)
+# print(haha)

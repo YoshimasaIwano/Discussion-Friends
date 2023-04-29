@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify
 from waitress import serve
 from google.cloud import storage
@@ -71,16 +72,19 @@ def save_audio():
 
 @app.route('/whisper', methods=['POST'])
 def whisper():
-    print(request.data)
-    return audio_to_text(request.data)
+    data = request.get_json()
+    print(json.dumps(data))
+    return audio_to_text(data['audioURL'], data['language'], data['topic'], data['level'])
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    return chat_gpt_debater(request.data)
+    data = request.get_json()
+    return chat_gpt_debater(json.dumps(data))
 
 @app.route('/summary', methods=['POST'])
 def summary():
-    return summarize_conversation(request.data)
+    data = request.get_json()
+    return summarize_conversation(json.dumps(data))
 
 # # this is for deployment
 # if __name__ == "__main__":
