@@ -10,7 +10,8 @@ import whisper
 def audio_to_text(audio_data):
 
     # Set your API key
-    whisper.api_key = "<OPENAI_API_KEY>"
+    print(os.environ["OPENAI_API_KEY"])
+    whisper.api_key = os.environ["OPENAI_API_KEY"]
 
     # Transcribe the audio data using the Whisper API
     response = requests.post(
