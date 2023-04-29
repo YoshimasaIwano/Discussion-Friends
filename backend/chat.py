@@ -2,23 +2,7 @@ import json
 import openai
 import json
 
-topic = "economic"
-
-messages = [
-    {"role": "system", "content": f"You are going to have a debate with the user. Your topic is about {topic}. Take a side and start an argument with the user. The purpose of this conversation is to improve the user's logical and critical thinking. After having 15 conversation with the user, end the conversation. Remember, the purpose of this conversation is to improve the user's logical thinking and critical thinking."},
-    {"role": "assistant", "content": "Why do you think economic is boring?"},
-    {"role": "assistant", "content": "I think economic is interesting because it is about money"},
-
-]
-
-# user_input_json = "/Users/kaiyuyokoi/Desktop/treasureHack/Discussion-Friends/backend/test.json"
-def chat_gpt_debater(text, language, topic, level):
-    # Load user input from JSON file
-    with open(user_input_json, "r") as json_file:
-        user_input = json.load(json_file)
-
-    # Append the user input to the message list
-    messages.append({"role": "user", "content": user_input["content"]})
+def chat_gpt_debater(messages, language, topic, level):
 
     # Call the OpenAI API
     response = openai.ChatCompletion.create(
@@ -30,16 +14,30 @@ def chat_gpt_debater(text, language, topic, level):
         temperature=0.8,
     )
 
-    # Extract the AI agent's first response
-    ai_response = response.choices[-1].message["content"]
+    return response.choices[-1].message.content
 
-    # Append the AI response to the message list
-    messages.append({"role": "assistant", "content": ai_response})
-
-    # Save the response as a JSON file
-    ai_response_json = {"content": ai_response}
-    print(ai_response_json)
-    return json.dumps(ai_response_json)
-
-# haha = chat_gpt_debater(user_input_json, messages)
-# print(haha)
+if __name__ == "__main__":
+    messages=[
+        {
+          "role": "user",
+          "content": "Hello, how are you?",
+        },
+        {
+          "role": "assistant",
+          "content": "Hi! I'm doing great, thank you. How can I help you today?",
+        },
+        {
+          "role": "user",
+          "content": "What's the weather like today?",
+        },
+        {
+          "role": "assistant",
+          "content":
+            "Today's weather is sunny with a high of 75°F and a low of 55°F.",
+        },
+      ]
+    language="English"
+    topic="science"
+    level="beginner"
+    haha = chat_gpt_debater(messages, language, topic, level)
+    print(type(haha), "\n", haha)
