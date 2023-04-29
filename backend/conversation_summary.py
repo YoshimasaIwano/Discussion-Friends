@@ -53,7 +53,7 @@ def summarize_conversation(conversation_history):
     # Extract the 'tmpChatHistory' list from the dictionary
     tmpChatHistory = json_data['tmpChatHistory']
     OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-    print(f"Bearer {OPENAI_API_KEY}")
+    print(tmpChatHistory)
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {OPENAI_API_KEY}"
@@ -67,6 +67,8 @@ def summarize_conversation(conversation_history):
     }
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(data))
+
+    print(response)
 
     if response.status_code != 200:
         raise ValueError(f"Error calling ChatGPT API: {response.status_code}")
