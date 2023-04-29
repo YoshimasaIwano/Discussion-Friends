@@ -27,3 +27,5 @@ six
 urllib3
 waitress
 Werkzeug
+openai
+openai_whisper
