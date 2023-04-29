@@ -7,8 +7,7 @@ import requests
 import json
 import whisper
 
-
-def wav_to_text_json(audio_data):
+def audio_to_text(audio_data):
 
     # Set your API key
     whisper.api_key = "<OPENAI_API_KEY>"
