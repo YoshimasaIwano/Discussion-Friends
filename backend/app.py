@@ -5,6 +5,7 @@ import os
 
 from speech_to_text import audio_to_text
 from ai_agent_return import chat_gpt_debater
+from conversation_summary import summarize_conversation
 
 app = Flask(__name__, static_folder='./build', static_url_path='/')
 
@@ -18,7 +19,11 @@ def whisper():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    return chat_gpt_debater(request.json)
+    return chat_gpt_debater(request.data)
+
+@app.route('/summary', methods=['POST'])
+def summary():
+    return summarize_conversation(request.data)
 
 # this is for deployment
 if __name__ == "__main__":
