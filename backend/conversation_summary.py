@@ -43,35 +43,53 @@
 import json
 import requests
 import os
+from dotenv import load_dotenv
+import openai
 
-def summarize_conversation(conversation_history):
-    decoded_string = conversation_history.decode('utf-8')
 
-    # Load the JSON string as a Python object (dictionary)
-    json_data = json.loads(decoded_string)
+def summerize_conversation(conversation_history):
 
-    # Extract the 'tmpChatHistory' list from the dictionary
-    tmpChatHistory = json_data['tmpChatHistory']
-    OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-    print(tmpChatHistory)
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {OPENAI_API_KEY}"
-    }
+    load_dotenv()
 
-    data = {
-        "messages": tmpChatHistory,
-        "max_tokens": 128,
-        "temperature": 0.9,
-        "model": "gpt-3.5-turbo",
-    }
+    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(data))
+    conversation_history.append({"role": "assistant", "content": "summerize the conversation"})
 
-    print(response)
+    openai.api_key = os.getenv("OPENAI_API_KEY")
 
-    if response.status_code != 200:
-        raise ValueError(f"Error calling ChatGPT API: {response.status_code}")
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=conversation_history,
+        temperature=0.9,
+        max_tokens=128
+    )
 
-    response_data = response.json()
-    return response_data["choices"][0]["message"]["content"]
+    return response.choices[-1].message.content
+
+if __name__ == "__main__":
+    tmpChatHistory = [
+        {
+          "role": "user",
+          "content": "Hello, how are you?",
+        },
+        {
+          "role": "assistant",
+          "content": "Hi! I'm doing great, thank you. How can I help you today?",
+        },
+        {
+          "role": "user",
+          "content": "What's the weather like today?",
+        },
+        {
+          "role": "assistant",
+          "content":
+            "Today's weather is sunny with a high of 75°F and a low of 55°F.",
+        },
+      ]
+
+    response = summerize_conversation(conversation_history=tmpChatHistory)
+
+    if response:
+        print(response)
+    else:
+        print("reponse: none")
