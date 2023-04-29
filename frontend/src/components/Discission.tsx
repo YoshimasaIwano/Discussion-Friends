@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDiscussion } from "../hooks/DiscussionContext";
 import { firebase, firestore } from "../firebase/firebase";
 
@@ -7,7 +7,7 @@ type Chat = {
   content: string;
 };
 
-function Discussion () {
+function Discussion() {
   const { language, topic, level, chatHistory, setChatHistory } =
     useDiscussion();
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -17,6 +17,17 @@ function Discussion () {
   );
   const audioChunks: Blob[] = useRef([]).current;
   const currentUser = firebase.auth().currentUser;
+  const [audioSent, setAudioSent] = useState(false);
+  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [whisperSent, setWhisperSent] = useState(false);
+  const [chatResponseReceived, setChatResponseReceived] = useState(false);
+
+  const resetStates = () => {
+    setAudioSent(false);
+    setWhisperSent(false);
+    setChatResponseReceived(false);
+  };
+
 
   const handleStartRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -33,86 +44,6 @@ function Discussion () {
     setRecording(true);
   };
 
-  const sendAudioData = async (audioBlob: Blob) => {
-    try {
-      // First, send the audio file
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "audio.wav");
-
-      const audioResponse = await fetch("/audio", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!audioResponse.ok) {
-        throw new Error(
-          `Error: ${audioResponse.status} ${audioResponse.statusText}`
-        );
-      }
-
-      const audioData = await audioResponse.json();
-      console.log("Audio file sent successfully:", audioData);
-      const audioURL = audioData.audioURL;
-
-      // Add a delay to ensure the audio file is fully uploaded
-      setTimeout(async () => {
-        // Then, send the audio URL and other information
-        const response = await fetch("/whisper", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            audioURL,
-            language,
-            topic,
-            level,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-
-        const responseData = await response.json();
-        console.log("Audio data sent successfully:", responseData);
-        const transcribedText = responseData.transcribedText;
-        setChatHistory(transcribedText);
-
-        // Call chat API and update chat history
-        const chatResponse = await fetch("/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            text: chatHistory,
-            language,
-            topic,
-            level,
-          }),
-        });
-
-        if (!chatResponse.ok) {
-          throw new Error(
-            `Error: ${chatResponse.status} ${chatResponse.statusText}`
-          );
-        }
-
-        const chatData = await chatResponse.json();
-        setChatHistory(chatData.conversation);
-
-        // Speak the response from chat
-        const responseText =
-          chatData.conversation[chatData.conversation.length - 1].content;
-        await speakText(responseText);
-      }, 3000);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-
   const handleStopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
@@ -123,6 +54,90 @@ function Discussion () {
       });
     }
   };
+
+  const sendAudioData = async (audioBlob: Blob) => {
+    // ...
+    // First, send the audio file
+    const formData = new FormData();
+    formData.append("audio", audioBlob, "audio.wav");
+
+    const audioResponse = await fetch("/audio", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!audioResponse.ok) {
+      throw new Error(
+        `Error: ${audioResponse.status} ${audioResponse.statusText}`
+      );
+    }
+    const audioData = await audioResponse.json();
+    const audioURL = audioData.audioURL;
+    setAudioURL(audioURL);
+    // ...
+    setAudioSent(true);
+  };
+
+  const sendWhisper = async () => {
+    // ...
+    const response = await fetch("/whisper", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        audioURL,
+        language,
+        topic,
+        level,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+    }
+    const responseData = await response.json();
+    console.log("Audio data sent successfully:", responseData);
+    const transcribedText = responseData.transcribedText;
+    setChatHistory(transcribedText);
+    // ...
+    setWhisperSent(true);
+  };
+
+  
+
+  const sendChat = async () => {
+    // ...
+    const chatResponse = await fetch("/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: chatHistory,
+        language,
+        topic,
+        level,
+      }),
+    });
+
+    if (!chatResponse.ok) {
+      throw new Error(
+        `Error: ${chatResponse.status} ${chatResponse.statusText}`
+      );
+    }
+
+    const chatData = await chatResponse.json();
+    setChatHistory(chatData.conversation);
+    // ...
+    // Speak the response from chat
+    const responseText =
+      chatData.conversation[chatData.conversation.length - 1].content;
+    await speakText(responseText);
+    setChatResponseReceived(true);
+  };
+
+  
 
   const speakText = async (text: string) => {
     setIsSpeaking(true);
@@ -165,6 +180,150 @@ function Discussion () {
       setIsSpeaking(false);
     }
   };
+
+  useEffect(() => {
+    if (audioSent && !whisperSent) {
+      sendWhisper();
+    }
+
+    if (whisperSent && !chatResponseReceived) {
+      sendChat();
+    }
+
+    if (chatResponseReceived && !isSpeaking) {
+      const responseText = chatHistory[chatHistory.length - 1].content;
+      speakText(responseText);
+      resetStates();
+    }
+  }, [
+    audioSent,
+    whisperSent,
+    chatResponseReceived,
+    isSpeaking,
+    chatHistory,
+    sendWhisper,
+    sendChat,
+    speakText,
+  ]);
+
+
+  // const sendAudioData = async (audioBlob: Blob) => {
+  //   try {
+  //     // First, send the audio file
+  //     const formData = new FormData();
+  //     formData.append("audio", audioBlob, "audio.wav");
+
+  //     const audioResponse = await fetch("/audio", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     if (!audioResponse.ok) {
+  //       throw new Error(
+  //         `Error: ${audioResponse.status} ${audioResponse.statusText}`
+  //       );
+  //     }
+
+  //     const audioData = await audioResponse.json();
+  //     console.log("Audio file sent successfully:", audioData);
+  //     const audioURL = audioData.audioURL;
+
+  //     // Then, send the audio URL and other information
+  //     const response = await fetch("/whisper", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         audioURL,
+  //         language,
+  //         topic,
+  //         level,
+  //       }),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`Error: ${response.status} ${response.statusText}`);
+  //     }
+
+  //     const responseData = await response.json();
+  //     console.log("Audio data sent successfully:", responseData);
+  //     const transcribedText = responseData.transcribedText;
+  //     setChatHistory(transcribedText);
+
+  //     // Call chat API and update chat history
+  //     const chatResponse = await fetch("/chat", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         text: chatHistory,
+  //         language,
+  //         topic,
+  //         level,
+  //       }),
+  //     });
+
+  //     if (!chatResponse.ok) {
+  //       throw new Error(
+  //         `Error: ${chatResponse.status} ${chatResponse.statusText}`
+  //       );
+  //     }
+
+  //     const chatData = await chatResponse.json();
+  //     setChatHistory(chatData.conversation);
+
+  //     // Speak the response from chat
+  //     const responseText =
+  //       chatData.conversation[chatData.conversation.length - 1].content;
+  //     await speakText(responseText);
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
+
+  // const speakText = async (text: string) => {
+  //   setIsSpeaking(true);
+  //   const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+  //   const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
+
+  //   const data = {
+  //     input: {
+  //       text,
+  //     },
+  //     voice: {
+  //       languageCode: "en-US",
+  //       name: "en-US-Wavenet-A",
+  //     },
+  //     audioConfig: {
+  //       audioEncoding: "MP3",
+  //     },
+  //   };
+
+  //   try {
+  //     const response = await fetch(url, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(data),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`Error: ${response.status} ${response.statusText}`);
+  //     }
+
+  //     const responseData = await response.json();
+  //     const audioContent = responseData.audioContent;
+  //     const audio = new Audio(`data:audio/mp3;base64,${audioContent}`);
+  //     audio.play();
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   } finally {
+  //     setIsSpeaking(false);
+  //   }
+  // };
 
   const addToFirestore = async (user: firebase.User, responseData: string) => {
     const userRef = firestore.collection("users").doc(user.uid);
@@ -216,7 +375,7 @@ function Discussion () {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          tmpChatHistory,
+          data: tmpChatHistory,
         }),
       });
 
@@ -259,6 +418,6 @@ function Discussion () {
       </div>
     </div>
   );
-};
+}
 
 export default Discussion;

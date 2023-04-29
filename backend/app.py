@@ -83,7 +83,7 @@ def chat():
 @app.route('/summary', methods=['POST'])
 def summary():
     data = request.get_json()
-    return summarize_conversation(json.dumps(data))
+    return summarize_conversation(data['data'])
 
 # # this is for deployment
 # if __name__ == "__main__":

@@ -47,7 +47,7 @@ from dotenv import load_dotenv
 import openai
 
 
-def summerize_conversation(conversation_history):
+def summarize_conversation(conversation_history):
 
     load_dotenv()
 
@@ -66,30 +66,30 @@ def summerize_conversation(conversation_history):
 
     return response.choices[-1].message.content
 
-if __name__ == "__main__":
-    tmpChatHistory = [
-        {
-          "role": "user",
-          "content": "Hello, how are you?",
-        },
-        {
-          "role": "assistant",
-          "content": "Hi! I'm doing great, thank you. How can I help you today?",
-        },
-        {
-          "role": "user",
-          "content": "What's the weather like today?",
-        },
-        {
-          "role": "assistant",
-          "content":
-            "Today's weather is sunny with a high of 75°F and a low of 55°F.",
-        },
-      ]
+# if __name__ == "__main__":
+#     tmpChatHistory = [
+#         {
+#           "role": "user",
+#           "content": "Hello, how are you?",
+#         },
+#         {
+#           "role": "assistant",
+#           "content": "Hi! I'm doing great, thank you. How can I help you today?",
+#         },
+#         {
+#           "role": "user",
+#           "content": "What's the weather like today?",
+#         },
+#         {
+#           "role": "assistant",
+#           "content":
+#             "Today's weather is sunny with a high of 75°F and a low of 55°F.",
+#         },
+#       ]
 
-    response = summerize_conversation(conversation_history=tmpChatHistory)
+#     response = summerize_conversation(conversation_history=tmpChatHistory)
 
-    if response:
-        print(response)
-    else:
-        print("reponse: none")
+#     if response:
+#         print(response)
+#     else:
+#         print("reponse: none")
