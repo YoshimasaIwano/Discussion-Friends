@@ -44,13 +44,6 @@ import json
 import requests
 import os
 
-# os.environ["OPENAI_API_KEY"] = "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"
-# if "OPENAI_API_KEY" in os.environ:
-#     print("OPENAI_API_KEY is set")
-# else:
-#     print("OPENAI_API_KEY is not set")
-
-
 def summarize_conversation(conversation_history):
     decoded_string = conversation_history.decode('utf-8')
 
