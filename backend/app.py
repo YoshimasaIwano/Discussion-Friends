@@ -9,6 +9,7 @@ from conversation_summary import summarize_conversation
 
 app = Flask(__name__, static_folder='./build', static_url_path='/')
 app.config['UPLOAD_FOLDER'] = 'images/profile'
+app.config['AUDIO_FOLDER'] = 'audio'
 app.config['GCS_BUCKET_NAME'] = 'treasure-385205.appspot.com'
 
 storage_client = storage.Client()
@@ -43,26 +44,30 @@ def upload():
 
 @app.route('/audio', methods=['POST'])
 def save_audio():
-    # Check if the request contains an image file
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image file found in request'}), 400
+    # Check if the request contains an audio file
+    if 'audio' not in request.files:
+        return jsonify({'error': 'No audio file found in request'}), 400
 
-    image = request.files['image']
+    audio = request.files['audio']
 
-    # Check if the image filename is not empty
-    if image.filename == '':
-        return jsonify({'error': 'No selected image file'}), 400
+    # Check if the audio filename is not empty
+    if audio.filename == '':
+        return jsonify({'error': 'No selected audio file'}), 400
 
-    # Save the image to Google Cloud Storage
-    image_path = f"{app.config['UPLOAD_FOLDER']}/{image.filename}"
-    blob = bucket.blob(image_path)
-    blob.upload_from_string(image.read(), content_type=image.content_type)
+    # Check if the file has a valid content type
+    if not audio.content_type.startswith('audio/'):
+        return jsonify({'error': 'Invalid content type'}), 400
 
-    # Generate the image URL
-    image_url = f'https://storage.googleapis.com/{app.config["GCS_BUCKET_NAME"]}/{image_path}'
+    # Save the audio to Google Cloud Storage
+    audio_path = f"{app.config['AUDIO_FOLDER']}/{audio.filename}"
+    blob = bucket.blob(audio_path)
+    blob.upload_from_string(audio.read(), content_type=audio.content_type)
 
-    # Return the image URL
-    return jsonify({'photoURL': image_url})
+    # Generate the audio URL
+    audio_url = f'https://storage.googleapis.com/{app.config["GCS_BUCKET_NAME"]}/{audio_path}'
+
+    # Return the audio URL
+    return jsonify({'audioURL': audio_url})
 
 @app.route('/whisper', methods=['POST'])
 def whisper():

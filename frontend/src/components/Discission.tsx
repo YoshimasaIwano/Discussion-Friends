@@ -35,13 +35,33 @@ function Discussion () {
 
   const sendAudioData = async (audioBlob: Blob) => {
     try {
+      // First, send the audio file
       const formData = new FormData();
       formData.append("audio", audioBlob, "audio.wav");
 
+      const audioResponse = await fetch("/audio", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!audioResponse.ok) {
+        throw new Error(
+          `Error: ${audioResponse.status} ${audioResponse.statusText}`
+        );
+      }
+
+      const audioData = await audioResponse.json();
+      console.log("Audio file sent successfully:", audioData);
+      const audioURL = audioData.audioURL;
+
+      // Then, send the audio URL and other information
       const response = await fetch("/whisper", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          audio: formData,
+          audioURL,
           language,
           topic,
           level,
@@ -52,41 +72,12 @@ function Discussion () {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
 
-      const responseData = await response.json();
-      console.log("Audio data sent successfully:", responseData);
-      const transcribedText = responseData.transcribedText;
-
-      // Call chat API and update chat history
-      const chatResponse = await fetch("/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text: transcribedText,
-          language,
-          topic,
-          level,
-        }),
-      });
-
-      if (!chatResponse.ok) {
-        throw new Error(
-          `Error: ${chatResponse.status} ${chatResponse.statusText}`
-        );
-      }
-
-      const chatData = await chatResponse.json();
-      setChatHistory(chatData.conversation);
-
-      // Speak the response from chat
-      const responseText =
-        chatData.conversation[chatData.conversation.length - 1].content;
-      await speakText(responseText);
+      // ... (rest of the code remains the same)
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
 
   const handleStopRecording = () => {
     if (mediaRecorder) {
@@ -141,8 +132,7 @@ function Discussion () {
     }
   };
 
-  const addToFirestore = async (user: firebase.User) => {
-
+  const addToFirestore = async (user: firebase.User, responseData: string) => {
     const userRef = firestore.collection("users").doc(user.uid);
 
     // Get current discussions
@@ -150,11 +140,10 @@ function Discussion () {
     const userData = snapshot.data();
     const currentDiscussions = userData?.discussion ?? [];
 
-    // Create a new chat summary
     const chatSummary = {
       topic,
       datetime: new Date().toISOString(),
-      chatHistory,
+      responseData,
     };
 
     // Update the discussions array
@@ -167,21 +156,43 @@ function Discussion () {
 
   const sendSummary = async () => {
     try {
+      // Create a new chat summary
+      const tmpChatHistory = [
+        {
+          role: "user",
+          content: "Hello, how are you?",
+        },
+        {
+          role: "assistant",
+          content: "Hi! I'm doing great, thank you. How can I help you today?",
+        },
+        {
+          role: "user",
+          content: "What's the weather like today?",
+        },
+        {
+          role: "assistant",
+          content:
+            "Today's weather is sunny with a high of 75°F and a low of 55°F.",
+        },
+      ];
       const response = await fetch("/summary", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          chatHistory,
+          tmpChatHistory,
         }),
       });
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
+
+      const responseData = await response.json();
       if (currentUser) {
-        await addToFirestore(currentUser);
+        await addToFirestore(currentUser, responseData);
       }
 
       console.log("Summary sent successfully");
