@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { firebase, firestore } from "../firebase/firebase";
 
-const Profile: React.FC = () => {
+function Profile () {
   const currentUser = firebase.auth().currentUser;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);

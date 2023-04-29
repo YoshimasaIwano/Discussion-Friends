@@ -1,15 +1,22 @@
 import React, { useRef, useState } from "react";
 import { useDiscussion } from "../hooks/DiscussionContext";
+import { firestore } from "../firebase/firebase";
 
-const Discussion: React.FC = () => {
-  const { topic, level } = useDiscussion();
+type Chat = {
+  role: string;
+  content: string;
+};
+
+function Discussion () {
+  const { language, topic, level } = useDiscussion();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [audioURL, setAudioURL] = useState<string | null>(null);
   const audioChunks: Blob[] = useRef([]).current;
+  const [chatHistory, setChatHistory] = useState<Chat[]>([]);
+
 
   const handleStartRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -20,9 +27,6 @@ const Discussion: React.FC = () => {
     });
 
     recorder.addEventListener("stop", () => {
-      const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-      const url = URL.createObjectURL(audioBlob);
-      setAudioURL(url);
     });
 
     setMediaRecorder(recorder);
@@ -30,21 +34,83 @@ const Discussion: React.FC = () => {
     setRecording(true);
   };
 
+  const sendAudioData = async (audioBlob: Blob) => {
+    try {
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "audio.wav");
+
+      const response = await fetch("/whisper", {
+        method: "POST",
+        body: JSON.stringify({
+          audio: formData,
+          language,
+          topic,
+          level,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      console.log("Audio data sent successfully:", responseData);
+      const transcribedText = responseData.transcribedText;
+
+      // Call chat API and update chat history
+      const chatResponse = await fetch("/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: transcribedText,
+          language,
+          topic,
+          level,
+        }),
+      });
+
+      if (!chatResponse.ok) {
+        throw new Error(
+          `Error: ${chatResponse.status} ${chatResponse.statusText}`
+        );
+      }
+
+      const chatData = await chatResponse.json();
+      setChatHistory((prevHistory) => [
+        ...prevHistory,
+        ...chatData.conversation,
+      ]);
+
+      // Speak the response from chat
+      const responseText =
+        chatData.conversation[chatData.conversation.length - 1].content;
+      await speakText(responseText);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const handleStopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
       setRecording(false);
+      mediaRecorder.addEventListener("stop", async () => {
+        const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+        await sendAudioData(audioBlob);
+      });
     }
   };
 
-  const speak = async () => {
+  const speakText = async (text: string) => {
     setIsSpeaking(true);
-    const apiKey = process.env.REACT_APP_GOOGLE_API_KEY; 
+    const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
     const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
 
     const data = {
       input: {
-        text: "Hello",
+        text,
       },
       voice: {
         languageCode: "en-US",
@@ -78,26 +144,75 @@ const Discussion: React.FC = () => {
       setIsSpeaking(false);
     }
   };
+
+  const addToFirestore = async () => {
+    const userId = "<YOUR_USER_ID>"; // Replace with the actual user ID
+    const userRef = firestore.collection("users").doc(userId);
+
+    // Get current discussions
+    const snapshot = await userRef.get();
+    const userData = snapshot.data();
+    const currentDiscussions = userData?.discussion ?? [];
+
+    // Create a new chat summary
+    const chatSummary = {
+      topic,
+      datetime: new Date().toISOString(),
+      chatHistory,
+    };
+
+    // Update the discussions array
+    await userRef.update({
+      discussion: [...currentDiscussions, chatSummary],
+    });
+
+    console.log("Chat history added to Firestore");
+  };
+
+  const sendSummary = async () => {
+    try {
+      const response = await fetch("/summary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chatHistory,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      await addToFirestore();
+
+      console.log("Summary sent successfully");
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   
   return (
     <div>
-      <button onClick={speak} disabled={isSpeaking}>
-        {isSpeaking ? "Speaking..." : "Say Hello"}
-      </button>
       <div>
         <h1>Audio Recorder</h1>
         <button onClick={handleStartRecording} disabled={recording}>
-          Start Recording
+          Start Talking
         </button>
         <button onClick={handleStopRecording} disabled={!recording}>
-          Stop Recording
+          Stop Talking
         </button>
-        {audioURL && (
-          <div>
-            <h3>Recorded Audio:</h3>
-            <audio src={audioURL} controls />
-          </div>
-        )}
+      </div>
+      <div>
+        <h1>Chat History</h1>
+        <ul>
+          {chatHistory.map((chat, index) => (
+            <li key={index}>
+              {chat.role}: {chat.content}
+            </li>
+          ))}
+        </ul>
+        <button onClick={sendSummary}>Finish</button>
       </div>
     </div>
   );

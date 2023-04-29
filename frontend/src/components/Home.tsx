@@ -19,6 +19,24 @@ function Home() {
       <Form>
         <Form.Group as={Row} controlId="topic">
           <Form.Label column sm={2}>
+            language
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              as="select"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+            >
+              <option value="">English</option>
+              <option value="japansese">Japansese</option>
+              <option value="spanish">Spanish</option>
+              <option value="chinese">Chinese</option>
+              {/* // Add more options here */}
+            </Form.Control>
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} controlId="topic">
+          <Form.Label column sm={2}>
             Topic
           </Form.Label>
           <Col sm={10}>
