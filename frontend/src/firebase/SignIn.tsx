@@ -6,7 +6,7 @@ import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
 import App from "../App";
 
-const SignIn: React.FC = () => {
+function SignIn() {
   const { user } = useAuth();
   const uiRef = useRef<firebaseui.auth.AuthUI | null>(null);
   const signInContainerRef = useRef<HTMLDivElement | null>(null);

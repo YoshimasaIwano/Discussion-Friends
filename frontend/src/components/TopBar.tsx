@@ -4,7 +4,7 @@ import { useAuth } from "../firebase/AuthContent";
 import { firebase } from "../firebase/firebase";
 import { Navbar, Nav } from "react-bootstrap";
 
-const TopBar: React.FC = () => {
+function TopBar() {
   const { user } = useAuth();
   const [expanded, setExpanded] = useState(false);
 
@@ -48,6 +48,6 @@ const TopBar: React.FC = () => {
       </Navbar.Collapse>
     </Navbar>
   );
-};
+}
 
 export default TopBar;
