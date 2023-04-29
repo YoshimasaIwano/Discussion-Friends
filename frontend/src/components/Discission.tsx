@@ -54,25 +54,59 @@ function Discussion () {
       console.log("Audio file sent successfully:", audioData);
       const audioURL = audioData.audioURL;
 
-      // Then, send the audio URL and other information
-      const response = await fetch("/whisper", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          audioURL,
-          language,
-          topic,
-          level,
-        }),
-      });
+      // Add a delay to ensure the audio file is fully uploaded
+      setTimeout(async () => {
+        // Then, send the audio URL and other information
+        const response = await fetch("/whisper", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            audioURL,
+            language,
+            topic,
+            level,
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
 
-      // ... (rest of the code remains the same)
+        const responseData = await response.json();
+        console.log("Audio data sent successfully:", responseData);
+        const transcribedText = responseData.transcribedText;
+        setChatHistory(transcribedText);
+
+        // Call chat API and update chat history
+        const chatResponse = await fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: chatHistory,
+            language,
+            topic,
+            level,
+          }),
+        });
+
+        if (!chatResponse.ok) {
+          throw new Error(
+            `Error: ${chatResponse.status} ${chatResponse.statusText}`
+          );
+        }
+
+        const chatData = await chatResponse.json();
+        setChatHistory(chatData.conversation);
+
+        // Speak the response from chat
+        const responseText =
+          chatData.conversation[chatData.conversation.length - 1].content;
+        await speakText(responseText);
+      }, 3000);
     } catch (error) {
       console.error("Error:", error);
     }

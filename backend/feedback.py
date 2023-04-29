@@ -1,23 +1,29 @@
-import json
+import os
+from dotenv import load_dotenv
 import openai
-import json
 
-def chat_gpt_debater(messages, language, topic, level):
 
-    # Call the OpenAI API
+def feedback(conversation_history):
+
+    load_dotenv()
+
+    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+
+    conversation_history.append({"role": "assistant", "content": "Critically read through the conversation and provide a feedback to improve the discussion"})
+
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        messages=messages,
-        max_tokens=150,
-        n=1,
-        stop=None,
-        temperature=0.8,
+        messages=conversation_history,
+        temperature=0.9,
+        max_tokens=128
     )
 
     return response.choices[-1].message.content
 
 if __name__ == "__main__":
-    messages=[
+    tmpChatHistory = [
         {
           "role": "user",
           "content": "Hello, how are you?",
@@ -36,8 +42,10 @@ if __name__ == "__main__":
             "Today's weather is sunny with a high of 75°F and a low of 55°F.",
         },
       ]
-    language="English"
-    topic="science"
-    level="beginner"
-    haha = chat_gpt_debater(messages, language, topic, level)
-    print(type(haha), "\n", haha)
+
+    response = feedback(conversation_history=tmpChatHistory)
+
+    if response:
+        print(response)
+    else:
+        print("reponse: none")
