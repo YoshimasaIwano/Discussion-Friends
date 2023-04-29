@@ -73,13 +73,12 @@ def save_audio():
 @app.route('/whisper', methods=['POST'])
 def whisper():
     data = request.get_json()
-    print(json.dumps(data))
     return audio_to_text(data['audioURL'], data['language'], data['topic'], data['level'])
 
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
-    return chat_gpt_debater(json.dumps(data))
+    return chat_gpt_debater(data['text'], data['language'], data['topic'], data['level'])
 
 @app.route('/summary', methods=['POST'])
 def summary():
