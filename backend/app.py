@@ -41,6 +41,29 @@ def upload():
     # Return the image URL
     return jsonify({'photoURL': image_url})
 
+@app.route('/audio', methods=['POST'])
+def save_audio():
+    # Check if the request contains an image file
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image file found in request'}), 400
+
+    image = request.files['image']
+
+    # Check if the image filename is not empty
+    if image.filename == '':
+        return jsonify({'error': 'No selected image file'}), 400
+
+    # Save the image to Google Cloud Storage
+    image_path = f"{app.config['UPLOAD_FOLDER']}/{image.filename}"
+    blob = bucket.blob(image_path)
+    blob.upload_from_string(image.read(), content_type=image.content_type)
+
+    # Generate the image URL
+    image_url = f'https://storage.googleapis.com/{app.config["GCS_BUCKET_NAME"]}/{image_path}'
+
+    # Return the image URL
+    return jsonify({'photoURL': image_url})
+
 @app.route('/whisper', methods=['POST'])
 def whisper():
     return audio_to_text(request.data)
