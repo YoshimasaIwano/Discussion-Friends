@@ -1,2 +1,4 @@
 # production
 /build
+
+__pycache__/*
