@@ -7,6 +7,9 @@ import requests
 import json
 import whisper
 
+# get the audio data from the frontend and convert it to mp3
+
+
 def audio_to_text(audio_data):
 
     # Set your API key
@@ -15,17 +18,18 @@ def audio_to_text(audio_data):
 
     # Transcribe the audio data using the Whisper API
     response = requests.post(
-        "https://api.openai.com/v1/speech-to-text/transcriptions",
+        "https://api.openai.com/v1/audio/transcriptions",
         headers={
-            "Content-Type": "audio/wav",
+            "Content-Type": "",
             "Authorization": f"Bearer {whisper.api_key}"
         },
         data=audio_data
     )
-
+    print(response)
     # Check for errors and parse the response
     if response.status_code == 200:
         transcription_data = response.json()
+        print(transcription_data)
         return json.dumps(transcription_data, indent=2)
     else:
         raise Exception(f"Error in transcription: {response.status_code}")
