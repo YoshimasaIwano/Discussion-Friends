@@ -10,20 +10,16 @@ import whisper
 # get the audio data from the frontend and convert it to mp3
 
 
-def audio_to_text(audio_data):
-
-    # Set your API key
-    print(os.environ["OPENAI_API_KEY"])
+def audio_to_text(data):
     whisper.api_key = os.environ["OPENAI_API_KEY"]
-
     # Transcribe the audio data using the Whisper API
     response = requests.post(
         "https://api.openai.com/v1/audio/transcriptions",
         headers={
-            "Content-Type": "",
+            "Content-Type": "audio/wav",
             "Authorization": f"Bearer {whisper.api_key}"
         },
-        data=audio_data
+        data=data.url
     )
     print(response)
     # Check for errors and parse the response

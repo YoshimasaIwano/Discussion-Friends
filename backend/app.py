@@ -43,6 +43,7 @@ def upload():
 
 @app.route('/whisper', methods=['POST'])
 def whisper():
+    print(request.data)
     return audio_to_text(request.data)
 
 @app.route('/chat', methods=['POST'])
