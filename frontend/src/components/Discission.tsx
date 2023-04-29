@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useDiscussion } from "../hooks/DiscussionContext";
-import { firestore } from "../firebase/firebase";
+import { firebase, firestore } from "../firebase/firebase";
 
 type Chat = {
   role: string;
@@ -8,15 +8,15 @@ type Chat = {
 };
 
 function Discussion () {
-  const { language, topic, level } = useDiscussion();
+  const { language, topic, level, chatHistory, setChatHistory } =
+    useDiscussion();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
   const audioChunks: Blob[] = useRef([]).current;
-  const [chatHistory, setChatHistory] = useState<Chat[]>([]);
-
+  const currentUser = firebase.auth().currentUser;
 
   const handleStartRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -26,8 +26,7 @@ function Discussion () {
       audioChunks.push(event.data);
     });
 
-    recorder.addEventListener("stop", () => {
-    });
+    recorder.addEventListener("stop", () => {});
 
     setMediaRecorder(recorder);
     recorder.start();
@@ -78,10 +77,7 @@ function Discussion () {
       }
 
       const chatData = await chatResponse.json();
-      setChatHistory((prevHistory) => [
-        ...prevHistory,
-        ...chatData.conversation,
-      ]);
+      setChatHistory(chatData.conversation);
 
       // Speak the response from chat
       const responseText =
@@ -145,9 +141,9 @@ function Discussion () {
     }
   };
 
-  const addToFirestore = async () => {
-    const userId = "<YOUR_USER_ID>"; // Replace with the actual user ID
-    const userRef = firestore.collection("users").doc(userId);
+  const addToFirestore = async (user: firebase.User) => {
+
+    const userRef = firestore.collection("users").doc(user.uid);
 
     // Get current discussions
     const snapshot = await userRef.get();
@@ -184,14 +180,16 @@ function Discussion () {
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
-      await addToFirestore();
+      if (currentUser) {
+        await addToFirestore(currentUser);
+      }
 
       console.log("Summary sent successfully");
     } catch (error) {
       console.error("Error:", error);
     }
   };
-  
+
   return (
     <div>
       <div>

@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { firebase, firestore } from "../firebase/firebase";
+import { useDiscussion } from "../hooks/DiscussionContext";
 
-function Profile () {
+function Profile() {
   const currentUser = firebase.auth().currentUser;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { chatHistory } = useDiscussion();
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -69,8 +71,18 @@ function Profile () {
         {isLoading ? "Uploading..." : "Upload"}
       </button>
       {errorMessage && <p>{errorMessage}</p>}
+      <div>
+        <h1>Chat History</h1>
+        <ul>
+          {chatHistory.map((chat, index) => (
+            <li key={index}>
+              {chat.role}: {chat.content}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
-};
+}
 
 export default Profile;
