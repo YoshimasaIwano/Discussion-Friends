@@ -1,13 +1,11 @@
 #receive it as wav file
 import openai
-import openai_whisper as whisper
 import os
 import requests
 import json
 import requests
 import json
 import whisper
-
 
 
 def wav_to_text_json(audio_data):

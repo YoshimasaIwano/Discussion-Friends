@@ -34,6 +34,9 @@ function TopBar() {
           <Nav.Link as={NavLink} to="/" onClick={handleCollapse}>
             Home
           </Nav.Link>
+          <Nav.Link as={NavLink} to="/Profile" onClick={handleCollapse}>
+            Profile
+          </Nav.Link>
           {user && (
             <Nav.Link
               onClick={() => {
