@@ -50,6 +50,26 @@ function Profile() {
     }
   };
 
+  const tmpChatHistory = [
+    {
+      role: "user",
+      content: "Hello, how are you?",
+    },
+    {
+      role: "assistant",
+      content: "Hi! I'm doing great, thank you. How can I help you today?",
+    },
+    {
+      role: "user",
+      content: "What's the weather like today?",
+    },
+    {
+      role: "assistant",
+      content:
+        "Today's weather is sunny with a high of 75°F and a low of 55°F.",
+    },
+  ];
+
   return (
     <div>
       <h1>Profile</h1>
@@ -74,7 +94,7 @@ function Profile() {
       <div>
         <h1>Chat History</h1>
         <ul>
-          {chatHistory.map((chat, index) => (
+          {tmpChatHistory.map((chat, index) => (
             <li key={index}>
               {chat.role}: {chat.content}
             </li>

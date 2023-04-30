@@ -395,18 +395,17 @@ function Discussion() {
   };
 
   return (
-    <div>
+    <div className="discussion-wrapper">
       <div>
-        <h1>Audio Recorder</h1>
-        <button onClick={handleStartRecording} disabled={recording}>
+        <h1 className="audio-recorder">Audio Recorder</h1>
+        <button onClick={handleStartRecording} disabled={recording} className="audio-start-btn">
           Start Talking
         </button>
-        <button onClick={handleStopRecording} disabled={!recording}>
-          Stop Talking
+        <button onClick={handleStopRecording} disabled={!recording} className="audio-stop-btn">
+          Stop
         </button>
       </div>
       <div>
-        <h1>Chat History</h1>
         <ul>
           {chatHistory.map((chat, index) => (
             <li key={index}>
@@ -414,7 +413,7 @@ function Discussion() {
             </li>
           ))}
         </ul>
-        <button onClick={sendSummary}>Finish</button>
+        <button onClick={sendSummary} className="finish-discussion-btn">Finish Discussion</button>
       </div>
     </div>
   );

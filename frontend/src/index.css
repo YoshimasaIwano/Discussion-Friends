@@ -5,10 +5,149 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+}
+
+#root {
+  margin: 0;
+  width: 100%;
+  height: 1300px;
+  background-color: #0077b6;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Sign-in screen */
+
+.container-signin-wrapper {
+  padding-top: 300px;
+  text-align: center;
+}
+
+.container-signin-items-wrapper {
+  text-align: center;
+}
+
+.container-signin-items-wrapper h1 {
+  font-size: 50px;
+  color: #ffffff;
+}
+
+.container-signin-items-wrapper p {
+  font-size: 20px;
+  color: #ffffff;
+}
+
+/* Home screen */
+.nav-bar-gym {
+  color: #a6ff00;
+}
+
+.nav-bar-logo {
+  color: #ffffff;
+}
+
+.nav-bar-home {
+  color: #ffffff;
+}
+
+.home-wrapper {
+  margin-top: 150px;
+  text-align: center;
+}
+
+.home-heading {
+  color: #ffffff;
+  margin-bottom: 10px;
+  font-size: 100px;
+}
+
+.home-heading-gym {
+  color: #a6ff00;
+}
+
+.home-heading-copy {
+  font-size: 30px;
+  color: rgb(255, 255, 255);
+  margin-bottom: 100px;
+}
+
+.option {
+  margin-bottom: 10px;
+  color: #ffffff;
+  line-height: 50px;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.option-form {
+  height: 50px;
+}
+
+.option-btn {
+  background-color: #a6ff00 !important;
+  margin-top: 10px;
+  width: 300px;
+  height: 60px;
+  color: #0077b6 !important;
+  transition: 0.5s !important;
+  font-size: 20px !important;
+  font-weight: bold !important;
+}
+
+.option-btn:hover {
+  opacity: 0.5;
+}
+
+/* discussion page */
+.discussion-wrapper {
+  text-align: center;
+  padding-top: 200px;
+}
+
+.audio-recorder {
+  color:rgb(255, 255, 255);
+  margin-bottom: 30px;
+}
+
+.audio-start-btn {
+  background-color: #a6ff00;
+  border: none;
+  border-radius: 4px;
+  width: 200px;
+  height: 60px;
+  font-size: 20px;
+  color: #0077b6;
+  font-weight: bold;
+  margin-right: 50px;
+  transition: 0.2s;
+}
+
+.audio-start-btn:hover {
+  opacity: 0.8;
+}
+
+.audio-stop-btn {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  width: 200px;
+  height: 60px;
+  font-size: 20px;
+  color: #0077b6;
+  font-weight: bold;
+  margin-left: 50px;
+  transition: 0.2s;
+}
+
+.audio-stop-btn:hover {
+  opacity: 0.8;
+}
+
+.chat-history {
+  color:rgb(255, 255, 255);
+  margin-top: 50px;
 }
