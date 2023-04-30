@@ -107,10 +107,11 @@ code {
   padding-top: 200px;
 }
 
-.audio-recorder {
+/* .audio-recorder {
   color:rgb(255, 255, 255);
-  margin-bottom: 30px;
-}
+  margin-bottom: 70px;
+  color: #000000;
+} */
 
 .audio-start-btn {
   background-color: #a6ff00;
@@ -141,9 +142,28 @@ code {
   margin-left: 50px;
   transition: 0.2s;
 }
+.audio-recorder-heading {
+  color:rgb(255, 255, 255);
+  margin-bottom: 70px;
+  font-size: 80px;
+  color: #000000;
+}
 
 .audio-stop-btn:hover {
   opacity: 0.8;
+}
+.finish-discussion-btn {
+  background-color: #d61818;
+  border: none;
+  border-radius: 10px;
+  width: 200px;
+  height: 60px;
+  font-size: 20px;
+  color: #0077b6;
+  font-weight: bold;
+  margin-top: 40px;
+  margin-left: 8px;
+  transition: 0.2s;
 }
 
 .chat-history {
