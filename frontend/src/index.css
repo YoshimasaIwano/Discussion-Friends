@@ -20,7 +20,6 @@ code {
 }
 
 /* Sign-in screen */
-
 .container-signin-wrapper {
   padding-top: 300px;
   text-align: center;
@@ -31,14 +30,16 @@ code {
 }
 
 .container-signin-items-wrapper h1 {
-  font-size: 50px;
+  font-size: 70px;
   color: #ffffff;
 }
 
 .container-signin-items-wrapper p {
-  font-size: 20px;
+  font-size: 30px;
   color: #ffffff;
 }
+
+
 
 /* Home screen */
 .nav-bar-gym {
