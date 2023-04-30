@@ -10,7 +10,7 @@ body {
 #root {
   margin: 0;
   width: 100%;
-  height: 1300px;
+  height: 1000px;
   background-color: #0077b6;
 }
 
@@ -71,7 +71,7 @@ code {
 .home-heading-copy {
   font-size: 30px;
   color: rgb(255, 255, 255);
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 }
 
 .option {
