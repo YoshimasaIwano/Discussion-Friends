@@ -53,14 +53,14 @@ def summarize_conversation(conversation_history):
 
     OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
-    conversation_history.append({"role": "assistant", "content": "summerize the conversation"})
+    conversation_history.append({"role": "assistant", "content": "You are an AI Agent that is designed to give a summary for the conversation. You should write in 200 words or less. Also, you should determine who made more good points during the session as a professional debater perspective."})
 
     openai.api_key = os.getenv("OPENAI_API_KEY")
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=conversation_history,
-        temperature=0.9,
+        temperature=0.2,
         max_tokens=128
     )
 
