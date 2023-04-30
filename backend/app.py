@@ -7,6 +7,7 @@ import os
 from speech_to_text import audio_to_text
 from chat import chat_gpt_debater
 from conversation_summary import summarize_conversation
+from feedback import feedback
 
 app = Flask(__name__, static_folder='./build', static_url_path='/')
 app.config['UPLOAD_FOLDER'] = 'images/profile'
@@ -84,6 +85,11 @@ def chat():
 def summary():
     data = request.get_json()
     return summarize_conversation(data['data'])
+
+@app.route('/summary', methods=['POST'])
+def feedback():
+    data = request.get_json()
+    return feedback(data['data'])
 
 # # this is for deployment
 # if __name__ == "__main__":

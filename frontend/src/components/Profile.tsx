@@ -50,32 +50,52 @@ function Profile() {
     }
   };
 
+  const tmpChatHistory = [
+    {
+      role: "user",
+      content: "Hello, how are you?",
+    },
+    {
+      role: "assistant",
+      content: "Hi! I'm doing great, thank you. How can I help you today?",
+    },
+    {
+      role: "user",
+      content: "What's the weather like today?",
+    },
+    {
+      role: "assistant",
+      content:
+        "Today's weather is sunny with a high of 75°F and a low of 55°F.",
+    },
+  ];
+
   return (
-    <div>
-      <h1>Profile</h1>
-      <p>user name: {currentUser?.displayName}</p>
-      <p>email: {currentUser?.email}</p>
+    <div className="profile-wrapper">
       {currentUser?.photoURL ? (
         <div>
           <img
             src={currentUser.photoURL}
             alt="User profile"
-            style={{ width: "100px" }}
+            className="profile-img"
           />
         </div>
       ) : (
         <p>No profile picture available</p>
       )}
-      <input type="file" accept="image/*" onChange={handleFileInputChange} />
-      <button onClick={handleUpload} disabled={isLoading}>
+      <p className="username">{currentUser?.displayName}</p>
+      <p className="email">{currentUser?.email}</p>
+      <input type="file" accept="image/*" onChange={handleFileInputChange} className="hidden-input"/>
+      <div className="upload-btn-wrapper"><button onClick={handleUpload} disabled={isLoading} className="upload-btn">
         {isLoading ? "Uploading..." : "Upload"}
       </button>
+      </div>
       {errorMessage && <p>{errorMessage}</p>}
-      <div>
-        <h1>Chat History</h1>
-        <ul>
-          {chatHistory.map((chat, index) => (
-            <li key={index}>
+      <div className="chat-history-wrapper">
+        <h1>Latest Chat History</h1>
+        <ul className="chat-history-list">
+          {tmpChatHistory.map((chat, index) => (
+            <li key={index} className="chat-history-list-item">
               {chat.role}: {chat.content}
             </li>
           ))}

@@ -22,8 +22,8 @@ function TopBar() {
 
   return (
     <Navbar expand="sm" expanded={expanded}>
-      <Navbar.Brand as={NavLink} to="/" onClick={handleCollapse}>
-        My App
+      <Navbar.Brand as={NavLink} to="/" onClick={handleCollapse} style={{ color: "#ffffff", fontSize: "30px", fontWeight: "bold" }}>
+        AI Brain<span className="nav-bar-gym">Gym</span>
       </Navbar.Brand>
       <Navbar.Toggle
         aria-controls="basic-navbar-nav"
@@ -31,10 +31,10 @@ function TopBar() {
       />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto">
-          <Nav.Link as={NavLink} to="/" onClick={handleCollapse}>
+          <Nav.Link as={NavLink} to="/" onClick={handleCollapse} style={{ color: "#ffffff", fontSize: "25px" }}>
             Home
           </Nav.Link>
-          <Nav.Link as={NavLink} to="/Profile" onClick={handleCollapse}>
+          <Nav.Link as={NavLink} to="/Profile" onClick={handleCollapse} style={{ color: "#ffffff", fontSize: "25px" }}>
             Profile
           </Nav.Link>
           {user && (
@@ -43,6 +43,7 @@ function TopBar() {
                 signOut();
                 handleCollapse();
               }}
+              style={{ color: "#ffffff", fontSize: "25px" }}
             >
               SignOut
             </Nav.Link>

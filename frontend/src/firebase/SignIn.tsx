@@ -57,8 +57,10 @@ function SignIn() {
   return (
     <Container>
       {!user ? (
-        <Row className="justify-content-md-center mt-5">
-          <Col md="auto">
+        <Row className="container-signin-wrapper">
+          <Col className="container-signin-items-wrapper">
+            <h1>Welcome Back</h1>
+            <p>Improve your learning productivity</p>
             <div id="firebaseui-auth-container" ref={signInContainerRef}></div>
           </Col>
         </Row>

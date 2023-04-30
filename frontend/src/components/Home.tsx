@@ -14,36 +14,39 @@ function Home() {
   };
 
   return (
-    <Container className="mt-5">
-      <h1 className="mb-4">AI Discussion App</h1>
-      <Form>
-        <Form.Group as={Row} controlId="topic">
+    <Container className="home-wrapper">
+      <h1 className="home-heading">AI Brain<span className="home-heading-gym">Gym</span></h1>
+      <p className="home-heading-copy">Why don't you train your brain at our "gym"?</p>
+      <Form className="option-items-wrapper">
+        <Form.Group as={Row} controlId="topic" className="option language">
           <Form.Label column sm={2}>
             language
           </Form.Label>
-          <Col sm={10}>
+          <Col sm={2}>
             <Form.Control
               as="select"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
+              className="option-form language"
             >
               <option value="">English</option>
-              <option value="japansese">Japansese</option>
+              <option value="japansese">Japanese</option>
               <option value="spanish">Spanish</option>
               <option value="chinese">Chinese</option>
               {/* // Add more options here */}
             </Form.Control>
           </Col>
         </Form.Group>
-        <Form.Group as={Row} controlId="topic">
+        <Form.Group as={Row} controlId="topic"  className="option topic">
           <Form.Label column sm={2}>
             Topic
           </Form.Label>
-          <Col sm={10}>
+          <Col sm={2}>
             <Form.Control
               as="select"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
+              className="option-form topic"              
             >
               <option value="">Select a topic</option>
               <option value="technology">Technology</option>
@@ -53,15 +56,16 @@ function Home() {
             </Form.Control>
           </Col>
         </Form.Group>
-        <Form.Group as={Row} controlId="level">
+        <Form.Group as={Row} controlId="level" className="option level">
           <Form.Label column sm={2}>
             Level
           </Form.Label>
-          <Col sm={10}>
+          <Col sm={2}>
             <Form.Control
               as="select"
               value={level}
               onChange={(e) => setLevel(e.target.value)}
+              className="option-form level"                
             >
               <option value="">Select a level</option>
               <option value="beginner">Beginner</option>
@@ -71,9 +75,10 @@ function Home() {
           </Col>
         </Form.Group>
         <Button
-          variant="primary"
+          // variant="secondary"
           disabled={!topic || !level}
           onClick={handleStartDiscussion}
+          className="option-btn"
         >
           Start Discussion
         </Button>
