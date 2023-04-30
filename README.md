@@ -1,7 +1,7 @@
 # Discussion-Friends
 
 ## Explanation
-This is a hackathon project for treasure hack contributed by @YoshimasaIwano, @Kaiyu0128 and Fuya
+This is a hackathon project for treasure hack contributed by @YoshimasaIwano, @Kaiyu0128 and @FuyaKoshiro
 
 ## Inspirations
 The development of Chat GPT has brought AI hallucination to the forefront as a major issue to be addressed. In a tongue-in-cheek response, we created a web service that aims to improve users' critical thinking skills by leveraging the Chat GPT API.
