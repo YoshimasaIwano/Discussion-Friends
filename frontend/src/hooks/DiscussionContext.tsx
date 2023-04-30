@@ -1,6 +1,6 @@
 // hooks/DiscussionContext.tsx
 import { createContext, useContext, useState } from "react";
-type Chat = {
+export type Chat = {
   role: string;
   content: string;
 };
@@ -20,7 +20,7 @@ const DiscussionContext = createContext<DiscussionContextType>({
   language: "",
   topic: "",
   level: "",
-    chatHistory: [],
+  chatHistory: [],
   setLanguage: () => {},
   setTopic: () => {},
   setLevel: () => {},
