@@ -397,7 +397,7 @@ function Discussion() {
   return (
     <div className="discussion-wrapper">
       <div>
-        <h1 className="audio-recorder">Audio Recorder</h1>
+        <p className="audio-recorder-heading">Let's train your brain</p>
         <button onClick={handleStartRecording} disabled={recording} className="audio-start-btn">
           Start Talking
         </button>
