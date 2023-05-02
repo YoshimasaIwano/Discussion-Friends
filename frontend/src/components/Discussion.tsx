@@ -2,24 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { Chat, useDiscussion } from "../hooks/DiscussionContext";
 import { firebase, firestore } from "../firebase/firebase";
 
-const tmpChatHistory = [
-  {
-    role: "user",
-    content: "Hello, how are you?",
-  },
-  {
-    role: "assistant",
-    content: "Hi! I'm doing great, thank you. How can I help you today?",
-  },
-  {
-    role: "user",
-    content: "What's the weather like today?",
-  },
-  {
-    role: "assistant",
-    content: "Today's weather is sunny with a high of 75°F and a low of 55°F.",
-  },
-];
+const languageDictionary: Record<string, string> = {
+  en: "English",
+  ja: "Japanese",
+  es: "Spanish",
+  zh: "Chinese",
+};
 
 function Discussion() {
   const { language, topic, level, chatHistory, setChatHistory } =
@@ -33,6 +21,19 @@ function Discussion() {
   const [responseText, setResponseText] = useState("");
   const audioChunks: Blob[] = useRef([]).current;
   const currentUser = firebase.auth().currentUser;
+
+  useEffect(() => {
+    setChatHistory([
+      {
+        role: "system",
+        content: `You are going to have a debate with ${level}'s the user in ${languageDictionary[language]}. 
+      Your topic is about ${topic}. Take a side and start an argument with the user. 
+      The purpose of this conversation is to improve the user's logical and critical thinking. 
+      After having 15 conversation with the user, end the conversation. 
+      Remember, the purpose of this conversation is to improve the user's logical thinking and critical thinking.`,
+      },
+    ]);
+  }, []);
 
   useEffect(() => {
     if (transcribedText) {
@@ -67,7 +68,7 @@ function Discussion() {
       mediaRecorder.stop();
       setRecording(false);
       mediaRecorder.addEventListener("stop", async () => {
-        const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+        const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
         await sendAudioData(audioBlob);
       });
     }
@@ -76,7 +77,7 @@ function Discussion() {
   const sendAudioData = async (audioBlob: Blob) => {
     try {
       const formData = new FormData();
-      formData.append("audio", audioBlob, "audio.wav");
+      formData.append("audio", audioBlob, "audio.mp3");
       formData.append("language", language);
       formData.append("topic", topic);
       formData.append("level", level);
@@ -93,7 +94,7 @@ function Discussion() {
       const whisperText = await response.json();
       console.log("Audio data sent successfully:", whisperText);
       setTranscribedText(whisperText);
-      setChatHistory([{ role: "user", content: whisperText }]);
+      setChatHistory([...chatHistory, { role: "user", content: whisperText }]);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -123,7 +124,10 @@ function Discussion() {
     const responseText = await chatResponse.json();
     console.log("Chat data sent successfully:", responseText);
     setResponseText(responseText);
-    setChatHistory([{ role: "assistant", content: responseText }]);
+    setChatHistory([
+      ...chatHistory,
+      { role: "assistant", content: responseText },
+    ]);
   };
 
   const speakText = async () => {

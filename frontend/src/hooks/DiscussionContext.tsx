@@ -36,7 +36,7 @@ interface DiscussionProviderProps {
 export const DiscussionProvider: React.FC<DiscussionProviderProps> = ({
   children,
 }) => {
-  const [language, setLanguage] = useState("");
+  const [language, setLanguage] = useState("en");
   const [topic, setTopic] = useState("");
   const [level, setLevel] = useState("");
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);

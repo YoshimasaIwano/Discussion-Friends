@@ -16,7 +16,7 @@ def audio_to_text(audio_url, language, topic, level):
     # file = {
     #     "name": audio_url,
     # }
-    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    transcript = openai.Audio.transcribe("whisper-1", audio_file, language=language)
     # print(transcript.text)
     # os.remove(audio_url)
     return transcript.text

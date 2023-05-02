@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDiscussion } from "../hooks/DiscussionContext";
 
 function Home() {
-  const { topic, level, setTopic, setLevel } = useDiscussion();
+  const { language, topic, level, setLanguage, setTopic, setLevel } = useDiscussion();
   const navigate = useNavigate();
   
 
@@ -25,14 +25,14 @@ function Home() {
           <Col sm={2}>
             <Form.Control
               as="select"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
               className="option-form language"
             >
-              <option value="">English</option>
-              <option value="japansese">Japanese</option>
-              <option value="spanish">Spanish</option>
-              <option value="chinese">Chinese</option>
+              <option value="en">English</option>
+              <option value="ja">Japanese</option>
+              <option value="es">Spanish</option>
+              <option value="zh">Chinese</option>
               {/* // Add more options here */}
             </Form.Control>
           </Col>
