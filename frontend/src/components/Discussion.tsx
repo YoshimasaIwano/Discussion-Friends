@@ -2,11 +2,39 @@ import React, { useEffect, useRef, useState } from "react";
 import { Chat, useDiscussion } from "../hooks/DiscussionContext";
 import { firebase, firestore } from "../firebase/firebase";
 
-const languageDictionary: Record<string, string> = {
-  en: "English",
-  ja: "Japanese",
-  es: "Spanish",
-  zh: "Chinese",
+type languageInfo = {
+  language: string;
+  languageCode: string;
+  name: string;
+};
+
+const English: languageInfo = {
+  language: "English",
+  languageCode: "en-US",
+  name: "en-US-Wavenet-A",
+};
+const Japanese: languageInfo = {
+  language: "Japanese",
+  languageCode: "ja-JP",
+  name: "ja-JP-Wavenet-A",
+};
+
+const Spanish: languageInfo = {
+  language: "Spanish",
+  languageCode: "es-ES",
+  name: "es-ES-Wavenet-B",
+};
+
+const Chinese: languageInfo = {
+  language: "Chinese",
+  languageCode: "cmn-CN",
+  name: "cmn-CN-Wavenet-A",
+};
+const languageDictionary: Record<string, languageInfo> = {
+  en: English,
+  ja: Japanese,
+  es: Spanish,
+  zh: Chinese,
 };
 
 function Discussion() {
@@ -26,7 +54,7 @@ function Discussion() {
     setChatHistory([
       {
         role: "system",
-        content: `You are going to have a debate with ${level}'s the user in ${languageDictionary[language]}. 
+        content: `You are going to have a debate with ${level}'s the user in ${languageDictionary[language].language}. 
       Your topic is about ${topic}. Take a side and start an argument with the user. 
       The purpose of this conversation is to improve the user's logical and critical thinking. 
       After having 15 conversation with the user, end the conversation. 
@@ -142,8 +170,8 @@ function Discussion() {
         text,
       },
       voice: {
-        languageCode: "en-US",
-        name: "en-US-Wavenet-A",
+        languageCode: languageDictionary[language].languageCode,
+        name: languageDictionary[language].name,
       },
       audioConfig: {
         audioEncoding: "MP3",
