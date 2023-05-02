@@ -3,7 +3,6 @@ import openai
 import json
 
 def chat_gpt_debater(messages, language, topic, level):
-
     # Call the OpenAI API
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",

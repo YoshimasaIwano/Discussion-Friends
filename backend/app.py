@@ -3,19 +3,35 @@ from flask import Flask, request, jsonify
 from waitress import serve
 from google.cloud import storage
 import os
+import openai
+import os
+import whisper
+from werkzeug.utils import secure_filename
 
 from speech_to_text import audio_to_text
 from chat import chat_gpt_debater
-from conversation_summary import summarize_conversation
+from summarize import summarize_conversation
 from feedback import feedback
 
-app = Flask(__name__, static_folder='./build', static_url_path='/')
+# app = Flask(__name__, static_folder='./build', static_url_path='/')
+app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'images/profile'
 app.config['AUDIO_FOLDER'] = 'audio'
 app.config['GCS_BUCKET_NAME'] = 'treasure-385205.appspot.com'
 
 storage_client = storage.Client()
 bucket = storage_client.get_bucket(app.config['GCS_BUCKET_NAME'])
+
+UPLOAD_FOLDER = 'audio'
+
+# def audio_to_text(audio_url, language, topic, level):
+#     whisper.api_key = os.environ["OPENAI_API_KEY"]
+#     # Transcribe the audio data using the Whisper API
+#     audio_file= open(audio_url, "rb")
+#     transcript = openai.Audio.transcribe("whisper-1", audio_file)
+#     print(transcript.text)
+#     # os.remove(audio_url)
+#     return transcript.text
 
 @app.route('/')
 def index():
@@ -73,23 +89,59 @@ def upload():
 
 @app.route('/whisper', methods=['POST'])
 def whisper():
-    data = request.get_json()
-    return audio_to_text(data['audioURL'], data['language'], data['topic'], data['level'])
+    # data = request.get_json()
+    if 'audio' not in request.files:
+        return 'No audio file in request', 400
+
+    audio_file = request.files['audio']
+    filename = secure_filename(audio_file.filename)
+    save_path = os.path.join(UPLOAD_FOLDER, filename)
+    audio_file.save(save_path)
+
+    # Extract additional information
+    language = request.form.get('language')
+    topic = request.form.get('topic')
+    level = request.form.get('level')
+
+    # Process the audio file and send it to an API
+    try:
+        transcribed_text = audio_to_text(save_path, language, topic, level)
+        # print(transcribedText)
+        return jsonify(transcribed_text)
+    except Exception as e:
+        return str(e), 500
+    # return audio_to_text(data['audioURL'], data['language'], data['topic'], data['level'])
+
+# @app.route('/whisper', methods=['POST'])
+# def whisper():
+#     data = request.get_json()
+#     return audio_to_text(data['audioURL'], data['language'], data['topic'], data['level'])
 
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
-    return chat_gpt_debater(data['text'], data['language'], data['topic'], data['level'])
+    # print(data)
+    try:
+        response_text = chat_gpt_debater(data['text'], data['language'], data['topic'], data['level'])
+        return jsonify(response_text)
+    except Exception as e:
+        return str(e), 500
 
 @app.route('/summary', methods=['POST'])
 def summary():
     data = request.get_json()
-    return summarize_conversation(data['data'])
+    # print(data)
+    try:
+        summarized_text = summarize_conversation(data['conversation'])
+        # print(summarized_text)
+        return jsonify(summarized_text)
+    except Exception as e:
+        return str(e), 500
 
-@app.route('/summary', methods=['POST'])
-def feedback():
-    data = request.get_json()
-    return feedback(data['data'])
+# @app.route('/summary', methods=['POST'])
+# def feedback():
+#     data = request.get_json()
+#     return feedback(data['data'])
 
 # # this is for deployment
 # if __name__ == "__main__":

@@ -46,11 +46,11 @@ import os
 from dotenv import load_dotenv
 import openai
 
-iteration_count = 0 
+# iteration_count = 0 
 
 def summarize_conversation(conversation_history):
-    global iteration_count
-    iteration_count += 1
+    # global iteration_count
+    # iteration_count += 1
 
     load_dotenv()
 
@@ -67,7 +67,7 @@ def summarize_conversation(conversation_history):
         max_tokens=128
     )
 
-    return response.choices[-1].message.content, iteration_count
+    return response.choices[-1].message.content #, iteration_count
 
 # if __name__ == "__main__":
 #     tmpChatHistory = [
