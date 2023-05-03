@@ -7,7 +7,7 @@ function Profile() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { chatHistory } = useDiscussion();
+  const { discussions } = useDiscussion();
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -85,19 +85,31 @@ function Profile() {
       )}
       <p className="username">{currentUser?.displayName}</p>
       <p className="email">{currentUser?.email}</p>
-      <input type="file" accept="image/*" onChange={handleFileInputChange} className="hidden-input"/>
-      <div className="upload-btn-wrapper"><button onClick={handleUpload} disabled={isLoading} className="upload-btn">
-        {isLoading ? "Uploading..." : "Upload"}
-      </button>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileInputChange}
+        className="hidden-input"
+      />
+      <div className="upload-btn-wrapper">
+        <button
+          onClick={handleUpload}
+          disabled={isLoading}
+          className="upload-btn"
+        >
+          {isLoading ? "Uploading..." : "Upload"}
+        </button>
       </div>
       {errorMessage && <p>{errorMessage}</p>}
       <div className="chat-history-wrapper">
         <h1>Latest Chat History</h1>
         <ul className="chat-history-list">
-          {tmpChatHistory.map((chat, index) => (
-            <li key={index} className="chat-history-list-item">
-              {chat.role}: {chat.content}
-            </li>
+          {discussions.map((discussion, index) => (
+            <div key={index}>
+              <h3>{discussion.topic}</h3>
+              <p>{discussion.datetime}</p>
+              <p>{discussion.summaryText}</p>
+            </div>
           ))}
         </ul>
       </div>

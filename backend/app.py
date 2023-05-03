@@ -13,16 +13,16 @@ from chat import chat_gpt_debater
 from summarize import summarize_conversation
 from feedback import feedback
 
-# app = Flask(__name__, static_folder='./build', static_url_path='/')
-app = Flask(__name__)
+app = Flask(__name__, static_folder='./build', static_url_path='/')
+# app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'images/profile'
-app.config['AUDIO_FOLDER'] = 'audio'
+app.config['AUDIO_FOLDER'] = '/tmp/audio'
 app.config['GCS_BUCKET_NAME'] = 'treasure-385205.appspot.com'
 
 storage_client = storage.Client()
 bucket = storage_client.get_bucket(app.config['GCS_BUCKET_NAME'])
 
-UPLOAD_FOLDER = 'audio'
+# UPLOAD_FOLDER = '/tmp/audio'
 
 # def audio_to_text(audio_url, language, topic, level):
 #     whisper.api_key = os.environ["OPENAI_API_KEY"]
@@ -95,7 +95,8 @@ def whisper():
 
     audio_file = request.files['audio']
     filename = secure_filename(audio_file.filename)
-    save_path = os.path.join(UPLOAD_FOLDER, filename)
+    os.makedirs(app.config['AUDIO_FOLDER'], exist_ok=True)
+    save_path = os.path.join(app.config['AUDIO_FOLDER'], filename)
     audio_file.save(save_path)
 
     # Extract additional information
@@ -143,14 +144,14 @@ def summary():
 #     data = request.get_json()
 #     return feedback(data['data'])
 
-# # this is for deployment
-# if __name__ == "__main__":
-#     app.debug = False
-#     PORT = os.environ.get('PORT', '5000')
-#     serve(app, host='0.0.0.0', port=PORT)
-
-# this is for your local environment
+# this is for deployment
 if __name__ == "__main__":
-    app.debug = True
+    app.debug = False
     PORT = os.environ.get('PORT', '5000')
-    app.run()
+    serve(app, host='0.0.0.0', port=PORT)
+
+# # this is for your local environment
+# if __name__ == "__main__":
+#     app.debug = True
+#     PORT = os.environ.get('PORT', '5000')
+#     app.run()

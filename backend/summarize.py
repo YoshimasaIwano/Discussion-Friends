@@ -43,7 +43,7 @@
 import json
 import requests
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import openai
 
 # iteration_count = 0 
@@ -52,13 +52,13 @@ def summarize_conversation(conversation_history):
     # global iteration_count
     # iteration_count += 1
 
-    load_dotenv()
+    # load_dotenv()
 
-    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+    # OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
     conversation_history.append({"role": "assistant", "content": "summerize the conversation in around 200 words."})
 
-    openai.api_key = os.getenv("OPENAI_API_KEY")
+    openai.api_key = os.environ["OPENAI_API_KEY"]
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",

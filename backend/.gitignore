@@ -7,3 +7,5 @@ __pycache__
 build/*
 treasure-385205-1bad8ea31075.json
 audio
+
+app.yaml
