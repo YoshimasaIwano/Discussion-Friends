@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { firebase, firestore } from "../firebase/firebase";
+import { firestore } from "../firebase/firebase";
+import { useAuth } from "../firebase/AuthContent";
 import { useDiscussion } from "../hooks/DiscussionContext";
 
 function Profile() {
-  const currentUser = firebase.auth().currentUser;
+  const { user } = useAuth();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -16,7 +17,7 @@ function Profile() {
   };
 
   const handleUpload = async () => {
-    if (currentUser && selectedFile) {
+    if (user && selectedFile) {
       setIsLoading(true);
       setErrorMessage(null);
       try {
@@ -35,9 +36,9 @@ function Profile() {
         const result = await response.json();
         const photoURL = result.photoURL;
 
-        await currentUser.updateProfile({ photoURL });
+        await user.updateProfile({ photoURL });
 
-        const userRef = firestore.collection("users").doc(currentUser.uid);
+        const userRef = firestore.collection("users").doc(user.uid);
         await userRef.update({ photoURL });
 
         setSelectedFile(null);
@@ -50,41 +51,17 @@ function Profile() {
     }
   };
 
-  const tmpChatHistory = [
-    {
-      role: "user",
-      content: "Hello, how are you?",
-    },
-    {
-      role: "assistant",
-      content: "Hi! I'm doing great, thank you. How can I help you today?",
-    },
-    {
-      role: "user",
-      content: "What's the weather like today?",
-    },
-    {
-      role: "assistant",
-      content:
-        "Today's weather is sunny with a high of 75°F and a low of 55°F.",
-    },
-  ];
-
   return (
     <div className="profile-wrapper">
-      {currentUser?.photoURL ? (
+      {user?.photoURL ? (
         <div>
-          <img
-            src={currentUser.photoURL}
-            alt="User profile"
-            className="profile-img"
-          />
+          <img src={user.photoURL} alt="User profile" className="profile-img" />
         </div>
       ) : (
         <p>No profile picture available</p>
       )}
-      <p className="username">{currentUser?.displayName}</p>
-      <p className="email">{currentUser?.email}</p>
+      <p className="username">{user?.displayName}</p>
+      <p className="email">{user?.email}</p>
       <input
         type="file"
         accept="image/*"

@@ -1,46 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useDiscussion } from "../hooks/DiscussionContext";
-import { firebase, firestore } from "../firebase/firebase";
-
-type languageInfo = {
-  language: string;
-  languageCode: string;
-  name: string;
-};
-
-const English: languageInfo = {
-  language: "English",
-  languageCode: "en-US",
-  name: "en-US-Wavenet-A",
-};
-const Japanese: languageInfo = {
-  language: "Japanese",
-  languageCode: "ja-JP",
-  name: "ja-JP-Wavenet-A",
-};
-
-const Spanish: languageInfo = {
-  language: "Spanish",
-  languageCode: "es-ES",
-  name: "es-ES-Wavenet-B",
-};
-
-const Chinese: languageInfo = {
-  language: "Chinese",
-  languageCode: "cmn-CN",
-  name: "cmn-CN-Wavenet-A",
-};
-const languageDictionary: Record<string, languageInfo> = {
-  en: English,
-  ja: Japanese,
-  es: Spanish,
-  zh: Chinese,
-};
+import { firestore } from "../firebase/firebase";
+import { useAuth } from "../firebase/AuthContent";
+import { languageDictionary } from "../types";
 
 function Discussion() {
-  const { language, topic, level, chatHistory, discussions, setChatHistory, setDiscussions } =
+  const { language, topic, level, chatHistory, setChatHistory, setDiscussions } =
     useDiscussion();
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
@@ -48,7 +14,7 @@ function Discussion() {
   const [transcribedText, setTranscribedText] = useState("");
   const [responseText, setResponseText] = useState("");
   const audioChunks = useRef<Blob[]>([]);
-  const currentUser = firebase.auth().currentUser;
+  const { user } = useAuth();
 
   useEffect(() => {
     setChatHistory([
@@ -57,7 +23,7 @@ function Discussion() {
         content: `You are going to have a debate with ${level}'s the user in ${languageDictionary[language].language}. 
       Your topic is about ${topic}. Take a side and start an argument with the user. 
       The purpose of this conversation is to improve the user's logical and critical thinking. 
-      After having 15 conversation with the user, end the conversation. 
+      Respond as short as possible. 
       Remember, the purpose of this conversation is to improve the user's logical thinking and critical thinking.`,
       },
     ]);
@@ -102,7 +68,6 @@ function Discussion() {
   useEffect(() => {
     if (responseText) {
       const speakText = async () => {
-        setIsSpeaking(true);
         const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
         const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
 
@@ -141,12 +106,11 @@ function Discussion() {
         } catch (error) {
           console.error("Error:", error);
         } finally {
-          setIsSpeaking(false);
         }
       };
       speakText();
     }
-  }, [language, responseText]);
+  }, [responseText]);
 
   const handleStartRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -202,29 +166,31 @@ function Discussion() {
     }
   };
 
-  const addToFirestore = async (user: firebase.User, summaryText: string) => {
-    const userRef = firestore.collection("users").doc(user.uid);
+  const addToFirestore = async (summaryText: string) => {
+    if (user) {
+      const userRef = firestore.collection("users").doc(user.uid);
 
-    // Get current discussions
-    const snapshot = await userRef.get();
-    const userData = snapshot.data();
-    const currentDiscussions = userData?.discussion ?? [];
+      // Get current discussions
+      const snapshot = await userRef.get();
+      const userData = snapshot.data();
+      const currentDiscussions = userData?.discussion ?? [];
 
-    // Create a new chat summary
-    const chatSummary = {
-      topic,
-      datetime: new Date().toISOString(),
-      summaryText,
-    };
+      // Create a new chat summary
+      const chatSummary = {
+        topic,
+        datetime: new Date().toISOString(),
+        summaryText,
+      };
 
-    // Update the discussions array
-    await userRef.update({
-      discussion: [...currentDiscussions, chatSummary],
-    });
+      // Update the discussions array
+      await userRef.update({
+        discussion: [...currentDiscussions, chatSummary],
+      });
 
-    setDiscussions([...currentDiscussions, chatSummary]);
+      setDiscussions([...currentDiscussions, chatSummary]);
 
-    console.log("Chat history added to Firestore");
+      console.log("Chat history added to Firestore");
+    }
   };
 
   const sendSummary = async () => {
@@ -245,8 +211,8 @@ function Discussion() {
         );
       }
       const summaryText = await summaryResponse.json();
-      if (currentUser) {
-        await addToFirestore(currentUser, summaryText);
+      if (user) {
+        await addToFirestore(summaryText);
       }
 
       console.log("Summary sent successfully");

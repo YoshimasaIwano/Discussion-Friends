@@ -1,5 +1,4 @@
 // Home.tsx
-import React, { useState } from "react";
 import { Button, Container, Form, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDiscussion } from "../hooks/DiscussionContext";
@@ -7,7 +6,6 @@ import { useDiscussion } from "../hooks/DiscussionContext";
 function Home() {
   const { language, topic, level, setLanguage, setTopic, setLevel } = useDiscussion();
   const navigate = useNavigate();
-  
 
   const handleStartDiscussion = () => {
     navigate("/Discussion");

@@ -1,29 +1,8 @@
 // hooks/DiscussionContext.tsx
 import { createContext, useContext, useEffect, useState } from "react";
-import { firebase, firestore } from "../firebase/firebase";
-export type Chat = {
-  role: string;
-  content: string;
-};
-
-export type ChatSummary = {
-  topic: string;
-  datetime: string;
-  summaryText: string;
-};
-
-type DiscussionContextType = {
-  language: string;
-  topic: string;
-  level: string;
-  chatHistory: Chat[];
-  discussions: ChatSummary[];
-  setLanguage: (topic: string) => void;
-  setTopic: (topic: string) => void;
-  setLevel: (level: string) => void;
-  setChatHistory: (chatHistory: Chat[]) => void;
-  setDiscussions: (discussions: ChatSummary[]) => void;
-};
+import { firestore } from "../firebase/firebase";
+import { useAuth } from "../firebase/AuthContent";
+import { Chat, ChatSummary, DiscussionContextType } from "../types";
 
 const DiscussionContext = createContext<DiscussionContextType>({
   language: "",
@@ -52,7 +31,7 @@ export const DiscussionProvider: React.FC<DiscussionProviderProps> = ({
   const [level, setLevel] = useState("");
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);
   const [discussions, setDiscussions] = useState<ChatSummary[]>([]);
-  const user = firebase.auth().currentUser;
+  const { user } = useAuth();
   useEffect(() => {
     fetchDiscussions();
   }, [user]);
