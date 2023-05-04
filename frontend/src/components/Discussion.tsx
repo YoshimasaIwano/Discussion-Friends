@@ -235,7 +235,7 @@ function Discussion() {
 
 
   return (
-    <Container fluid="md">
+    <Container fluid="md" className="vh-100">
       <Row className="mt-5 justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
           <Card>

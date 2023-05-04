@@ -57,13 +57,13 @@ function SignIn() {
   }, [user]);
 
   return (
-    <div className={darkMode ? "dark-mode" : ""}>
+    <div className={darkMode ? "dark-mode " : ""}>
       <Container className="bg-light text-dark" fluid="lg">
         {!user ? (
-          <Row>
-            <Col>
-              <h1>Welcome Back</h1>
-              <p>Improve your learning productivity</p>
+          <Row className="vh-100 align-items-center">
+            <Col className="text-center">
+              <h1 className="display-4">Welcome Back</h1>
+              <p className="lead mb-4">Improve your learning productivity</p>
               <div
                 id="firebaseui-auth-container"
                 ref={signInContainerRef}

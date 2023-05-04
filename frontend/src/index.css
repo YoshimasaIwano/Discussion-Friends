@@ -60,6 +60,37 @@ body {
   border-color: #1abc9c !important;
 }
 
+.text-red {
+  color: #d61818 !important;
+}
+
+/* profile page */
+.profile-image {
+  max-height: 300px;
+}
+
+.discussion-title {
+  font-size: 1.5rem !important;
+}
+
+.discussions-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.discussions-text {
+  color: black !important;
+}
+
+.discussions-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.discussions-list::-webkit-scrollbar-thumb {
+  background-color: #6c757d;
+  border-radius: 3px;
+}
+
 
 @media screen and (max-width: 800px) {
   .text-small {

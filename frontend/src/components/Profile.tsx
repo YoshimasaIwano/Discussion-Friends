@@ -1,4 +1,13 @@
 import React, { useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  ListGroup,
+  Button,
+  Form,
+} from "react-bootstrap";
 import { firestore } from "../firebase/firebase";
 import { useAuth } from "../firebase/AuthContent";
 import { useDiscussion } from "../hooks/DiscussionContext";
@@ -63,51 +72,72 @@ function Profile() {
     return { mainPoints, conclusion, feedback };
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
   return (
-    <div>
-      {user?.photoURL ? (
-        <div>
-          <img src={user.photoURL} alt="User profile" />
-        </div>
-      ) : (
-        <p>No profile picture available</p>
-      )}
-      <p>{user?.displayName}</p>
-      <p>{user?.email}</p>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleFileInputChange}
-      />
-      <div>
-        <button
-          onClick={handleUpload}
-          disabled={isLoading}
-        >
-          {isLoading ? "Uploading..." : "Upload"}
-        </button>
-      </div>
-      {errorMessage && <p>{errorMessage}</p>}
-      <ul>
-        {discussions.map((discussion, index) => {
-          const { mainPoints, conclusion, feedback } = parseSummaryText(
-            discussion.summaryText
-          );
-          return (
-            <div key={index}>
-              <h3>{discussion.topic}</h3>
-              <p>{discussion.datetime}</p>
-              <h4>Main Points</h4>
-              <p>{mainPoints}</p>
-              <h4>Conclusion</h4>
-              <p>{conclusion}</p>
-              <h4>Feedback</h4>
-              <p>{feedback}</p>
-            </div>
-          );
-        })}
-      </ul>
-    </div>
+    <Container className="py-4">
+      <Row className="my-4 py-4">
+        <Col md={4}>
+          {user?.photoURL ? (
+            <img
+              src={user.photoURL}
+              alt="User profile"
+              className="img-thumbnail img-fluid profile-image"
+            />
+          ) : (
+            <p>No profile picture available</p>
+          )}
+          <h3>{user?.displayName}</h3>
+          <Form.Group>
+            <Form.Control
+              type="file"
+              accept="image/*"
+              onChange={handleFileInputChange}
+            />
+            <Button
+              onClick={handleUpload}
+              disabled={isLoading}
+              className="mt-3"
+            >
+              {isLoading ? "Uploading..." : "Upload"}
+            </Button>
+          </Form.Group>
+          {errorMessage && <p className="text-danger">{errorMessage}</p>}
+        </Col>
+        <Col md={8}>
+          <h2>Discussions</h2>
+          <ListGroup className="discussions-list discussions-text">
+            {discussions.map((discussion, index) => {
+              const { mainPoints, conclusion, feedback } = parseSummaryText(
+                discussion.summaryText
+              );
+              return (
+                <Card key={index} className="mb-3">
+                  <Card.Body>
+                    <Card.Title className="text-capitalize font-weight-bold discussion-title">{discussion.topic}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">
+                      {formatDate(discussion.datetime)}
+                    </Card.Subtitle>
+                    <Card.Text>
+                      <strong>Main Points:</strong> {mainPoints}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Conclusion:</strong> {conclusion}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Feedback:</strong> {feedback}
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              );
+            })}
+          </ListGroup>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

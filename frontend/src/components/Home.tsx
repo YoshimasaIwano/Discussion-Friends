@@ -33,7 +33,7 @@ function Home() {
             <Form.Control
               as="select"
               value={language}
-              className="text-center text-small"
+              className="text-center text-small "
               onChange={(e) => setLanguage(e.target.value)}
             >
               <option value="en">English</option>
@@ -48,7 +48,7 @@ function Home() {
             <Form.Control
               as="select"
               value={topic}
-              className="text-center text-small"
+              className={`text-center text-small ${topic ? "" : "text-danger"}`}
               onChange={(e) => setTopic(e.target.value)}
             >
               <option value="">Select a topic</option>
@@ -68,17 +68,19 @@ function Home() {
             <Form.Control
               as="select"
               value={level}
-              className="text-center text-small"
+              className={`text-center text-small ${level ? "" : "text-danger"}`}
               onChange={(e) => setLevel(e.target.value)}
             >
-              <option value="">Select a level</option>
+              <option value="" className="text-red">
+                Select a level
+              </option>
               <option value="beginner">Beginner</option>
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced</option>
             </Form.Control>
           </Form.Group>
           <Form.Group as={Col} className="px-ns-0" controlId="speakingRate">
-            <Form.Label>Speaking Rate</Form.Label>
+            <Form.Label>Speed</Form.Label>
             <Form.Control
               type="range"
               min="0.25"
