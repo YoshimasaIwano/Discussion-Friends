@@ -4,14 +4,18 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './firebase/AuthContent';
 import SignIn from './firebase/SignIn';
+import { DiscussionProvider } from './hooks/DiscussionContext';
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const rootEl = document.getElementById("root");
 
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
-      <SignIn />
+      <DiscussionProvider>
+        <SignIn />
+      </DiscussionProvider>
     </AuthProvider>
   </React.StrictMode>,
   rootEl

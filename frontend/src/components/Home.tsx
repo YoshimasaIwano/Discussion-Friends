@@ -21,15 +21,15 @@ function Home() {
   };
 
   return (
-    <Container className="home-wrapper">
-      <h1 className="home-heading">
-        AI Brain<span className="home-heading-gym">Gym</span>
+    <Container>
+      <h1>
+        AI Brain<span>Gym</span>
       </h1>
-      <p className="home-heading-copy">
+      <p>
         Why don't you train your brain at our "gym"?
       </p>
-      <Form className="option-items-wrapper">
-        <Form.Group as={Row} controlId="topic" className="option language">
+      <Form>
+        <Form.Group as={Row} controlId="topic">
           <Form.Label column sm={2}>
             language
           </Form.Label>
@@ -38,7 +38,6 @@ function Home() {
               as="select"
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="option-form language"
             >
               <option value="en">English</option>
               <option value="ja">Japanese</option>
@@ -48,7 +47,7 @@ function Home() {
             </Form.Control>
           </Col>
         </Form.Group>
-        <Form.Group as={Row} controlId="topic" className="option topic">
+        <Form.Group as={Row} controlId="topic">
           <Form.Label column sm={2}>
             Topic
           </Form.Label>
@@ -57,7 +56,6 @@ function Home() {
               as="select"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              className="option-form topic"
             >
               <option value="">Select a topic</option>
               <option value="technology">Technology</option>
@@ -67,7 +65,7 @@ function Home() {
             </Form.Control>
           </Col>
         </Form.Group>
-        <Form.Group as={Row} controlId="level" className="option level">
+        <Form.Group as={Row} controlId="level">
           <Form.Label column sm={2}>
             Level
           </Form.Label>
@@ -76,7 +74,6 @@ function Home() {
               as="select"
               value={level}
               onChange={(e) => setLevel(e.target.value)}
-              className="option-form level"
             >
               <option value="">Select a level</option>
               <option value="beginner">Beginner</option>
@@ -110,7 +107,6 @@ function Home() {
           // variant="secondary"
           disabled={!topic || !level}
           onClick={handleStartDiscussion}
-          className="option-btn"
         >
           Start Discussion
         </Button>

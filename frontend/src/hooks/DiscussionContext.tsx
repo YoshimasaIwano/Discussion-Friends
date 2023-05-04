@@ -11,12 +11,14 @@ const DiscussionContext = createContext<DiscussionContextType>({
   speakingRate: 1.0,
   chatHistory: [],
   discussions: [],
+  darkMode: false,
   setLanguage: () => {},
   setTopic: () => {},
   setLevel: () => {},
-  setSpeakingRate: ()=> {},
+  setSpeakingRate: () => {},
   setChatHistory: () => {},
   setDiscussions: () => {},
+  toggleDarkMode: () => {},
 });
 
 export const useDiscussion = () => useContext(DiscussionContext);
@@ -34,10 +36,16 @@ export const DiscussionProvider: React.FC<DiscussionProviderProps> = ({
   const [speakingRate, setSpeakingRate] = useState(1.0);
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);
   const [discussions, setDiscussions] = useState<ChatSummary[]>([]);
+  const [darkMode, setDarkMode] = useState(false);
   const { user } = useAuth();
   useEffect(() => {
     fetchDiscussions();
   }, [user]);
+
+  const toggleDarkMode = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setDarkMode(!darkMode);
+  };
 
   const fetchDiscussions = async () => {
     if (!user?.uid) {
@@ -62,12 +70,14 @@ export const DiscussionProvider: React.FC<DiscussionProviderProps> = ({
         speakingRate,
         chatHistory,
         discussions,
+        darkMode,
         setLanguage,
         setTopic,
         setLevel,
         setSpeakingRate,
         setChatHistory,
         setDiscussions,
+        toggleDarkMode,
       }}
     >
       {children}

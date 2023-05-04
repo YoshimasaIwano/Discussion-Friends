@@ -64,33 +64,31 @@ function Profile() {
   };
 
   return (
-    <div className="profile-wrapper">
+    <div>
       {user?.photoURL ? (
         <div>
-          <img src={user.photoURL} alt="User profile" className="profile-img" />
+          <img src={user.photoURL} alt="User profile" />
         </div>
       ) : (
         <p>No profile picture available</p>
       )}
-      <p className="username">{user?.displayName}</p>
-      <p className="email">{user?.email}</p>
+      <p>{user?.displayName}</p>
+      <p>{user?.email}</p>
       <input
         type="file"
         accept="image/*"
         onChange={handleFileInputChange}
-        className="hidden-input"
       />
-      <div className="upload-btn-wrapper">
+      <div>
         <button
           onClick={handleUpload}
           disabled={isLoading}
-          className="upload-btn"
         >
           {isLoading ? "Uploading..." : "Upload"}
         </button>
       </div>
       {errorMessage && <p>{errorMessage}</p>}
-      <ul className="chat-history-list">
+      <ul>
         {discussions.map((discussion, index) => {
           const { mainPoints, conclusion, feedback } = parseSummaryText(
             discussion.summaryText

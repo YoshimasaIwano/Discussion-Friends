@@ -1,12 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { firebase, firestore } from "./firebase";
 import { useAuth } from "./AuthContent";
 import { Container, Row, Col } from "react-bootstrap";
 import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
 import App from "../App";
+import { useDiscussion } from "../hooks/DiscussionContext";
 
 function SignIn() {
+  const { darkMode } = useDiscussion();
   const { user } = useAuth();
   const uiRef = useRef<firebaseui.auth.AuthUI | null>(null);
   const signInContainerRef = useRef<HTMLDivElement | null>(null);
@@ -55,20 +57,25 @@ function SignIn() {
   }, [user]);
 
   return (
-    <Container>
-      {!user ? (
-        <Row className="container-signin-wrapper">
-          <Col className="container-signin-items-wrapper">
-            <h1>Welcome Back</h1>
-            <p>Improve your learning productivity</p>
-            <div id="firebaseui-auth-container" ref={signInContainerRef}></div>
-          </Col>
-        </Row>
-      ) : (
-        <App />
-      )}
-    </Container>
+    <div className={darkMode ? "dark-mode" : ""}>
+      <Container className="bg-light text-dark" fluid="lg">
+        {!user ? (
+          <Row>
+            <Col>
+              <h1>Welcome Back</h1>
+              <p>Improve your learning productivity</p>
+              <div
+                id="firebaseui-auth-container"
+                ref={signInContainerRef}
+              ></div>
+            </Col>
+          </Row>
+        ) : (
+          <App />
+        )}
+      </Container>
+    </div>
   );
-};
+}
 
 export default SignIn;

@@ -51,10 +51,12 @@ export type DiscussionContextType = {
   speakingRate: number;
   chatHistory: Chat[];
   discussions: ChatSummary[];
+  darkMode: boolean;
   setLanguage: (topic: string) => void;
   setTopic: (topic: string) => void;
   setLevel: (level: string) => void;
   setSpeakingRate: (rate: number) => void;
   setChatHistory: (chatHistory: Chat[]) => void;
   setDiscussions: (discussions: ChatSummary[]) => void;
+  toggleDarkMode: (event: React.MouseEvent) => void;
 };
