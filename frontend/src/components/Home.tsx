@@ -21,22 +21,19 @@ function Home() {
   };
 
   return (
-    <Container>
-      <h1>
-        AI Brain<span>Gym</span>
+    <Container className="text-center my-5 vh-100">
+      <h1 className="display-4">
+        AI Brain <span className="heading-gym fw-bold">Gym</span>
       </h1>
-      <p>
-        Why don't you train your brain at our "gym"?
-      </p>
-      <Form>
-        <Form.Group as={Row} controlId="topic">
-          <Form.Label column sm={2}>
-            language
-          </Form.Label>
-          <Col sm={2}>
+      <p className="lead mb-4">Why don't you train your brain at our "gym"?</p>
+      <Form className="mx-auto">
+        <Row>
+          <Form.Group as={Col} className="px-ns-0" controlId="language">
+            <Form.Label>Language</Form.Label>
             <Form.Control
               as="select"
               value={language}
+              className="text-center text-small"
               onChange={(e) => setLanguage(e.target.value)}
             >
               <option value="en">English</option>
@@ -45,34 +42,33 @@ function Home() {
               <option value="zh">Chinese</option>
               {/* // Add more options here */}
             </Form.Control>
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} controlId="topic">
-          <Form.Label column sm={2}>
-            Topic
-          </Form.Label>
-          <Col sm={2}>
+          </Form.Group>
+          <Form.Group as={Col} className="px-ns-0" controlId="topic">
+            <Form.Label>Topic</Form.Label>
             <Form.Control
               as="select"
               value={topic}
+              className="text-center text-small"
               onChange={(e) => setTopic(e.target.value)}
             >
               <option value="">Select a topic</option>
               <option value="technology">Technology</option>
               <option value="science">Science</option>
               <option value="sports">Sports</option>
-              {/* // Add more options here */}
+              <option value="business">Business</option>
+              <option value="health">Health</option>
+              <option value="education">Education</option>
+              <option value="politics">Politics</option>
+              <option value="entertainment">Entertainment</option>
+              <option value="history">History</option>
             </Form.Control>
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} controlId="level">
-          <Form.Label column sm={2}>
-            Level
-          </Form.Label>
-          <Col sm={2}>
+          </Form.Group>
+          <Form.Group as={Col} className="px-ns-0" controlId="level">
+            <Form.Label>Level</Form.Label>
             <Form.Control
               as="select"
               value={level}
+              className="text-center text-small"
               onChange={(e) => setLevel(e.target.value)}
             >
               <option value="">Select a level</option>
@@ -80,16 +76,9 @@ function Home() {
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced</option>
             </Form.Control>
-          </Col>
-        </Form.Group>
-        <Form.Group
-          as={Row}
-          controlId="speakingRate"
-        >
-          <Form.Label column sm={2}>
-            Speaking Rate
-          </Form.Label>
-          <Col sm={2}>
+          </Form.Group>
+          <Form.Group as={Col} className="px-ns-0" controlId="speakingRate">
+            <Form.Label>Speaking Rate</Form.Label>
             <Form.Control
               type="range"
               min="0.25"
@@ -98,18 +87,19 @@ function Home() {
               value={speakingRate}
               onChange={(e) => setSpeakingRate(parseFloat(e.target.value))}
             />
+            <p>{speakingRate.toFixed(2)}</p>
+          </Form.Group>
+          <Col xs={12}>
+            <Button
+              className="mt-3 discussion-button"
+              // variant="primary"
+              disabled={!topic || !level}
+              onClick={handleStartDiscussion}
+            >
+              Start Discussion
+            </Button>
           </Col>
-          <Col sm={2}>
-            <Form.Text>{speakingRate.toFixed(2)}</Form.Text>
-          </Col>
-        </Form.Group>
-        <Button
-          // variant="secondary"
-          disabled={!topic || !level}
-          onClick={handleStartDiscussion}
-        >
-          Start Discussion
-        </Button>
+        </Row>
       </Form>
     </Container>
   );

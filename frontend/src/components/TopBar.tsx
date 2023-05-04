@@ -23,22 +23,29 @@ function TopBar() {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-between">
+    <div className="d-flex align-items-top justify-content-between">
       <Navbar
         expand="sm"
         expanded={expanded}
         bg="transparent"
         variant={darkMode ? "dark" : "light"}
+        className="px-2"
       >
-        <Navbar.Brand as={NavLink} to="/" onClick={handleCollapse}>
-          AI Brain<span>Gym</span>
+        <Navbar.Brand
+          as={NavLink}
+          to="/"
+          className="fw-bold"
+          onClick={handleCollapse}
+        >
+          AI Brain<span className="heading-gym fw-bold">Gym</span>
         </Navbar.Brand>
         <Navbar.Toggle
           aria-controls="basic-navbar-nav"
           onClick={() => setExpanded(!expanded)}
+          className=""
         />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ml-auto">
+          <Nav>
             <Nav.Link as={NavLink} to="/" onClick={handleCollapse}>
               Home
             </Nav.Link>
@@ -58,14 +65,16 @@ function TopBar() {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      <button
-        className={`dark-mode-btn pr-3 ${
-          darkMode ? "dark-mode-btn-white" : "dark-mode-btn-black"
-        }`}
-        onClick={toggleDarkMode}
-      >
-        <i className="bi bi-sun-fill"></i>
-      </button>
+      <div className="px-5 mt-3">
+        <button
+          className={`dark-mode-btn ${
+            darkMode ? "dark-mode-btn-white" : "dark-mode-btn-black"
+          }`}
+          onClick={toggleDarkMode}
+        >
+          <i className="bi bi-sun-fill"></i>
+        </button>
+      </div>
     </div>
   );
 }

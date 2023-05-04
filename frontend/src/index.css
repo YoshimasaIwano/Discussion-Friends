@@ -49,7 +49,27 @@ body {
   font-size: 1rem;
 }
 
+/* topbar */
+.heading-gym {
+  color: #77b700;
+}
 
+.discussion-button {
+  background-color: #1abc9c !important;
+  color: #fff !important;
+  border-color: #1abc9c !important;
+}
+
+
+@media screen and (max-width: 800px) {
+  .text-small {
+    font-size: 0.8rem !important;
+  }
+  .px-ns-0 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
 
 /* code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
