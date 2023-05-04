@@ -48,11 +48,13 @@ export type DiscussionContextType = {
   language: string;
   topic: string;
   level: string;
+  speakingRate: number;
   chatHistory: Chat[];
   discussions: ChatSummary[];
   setLanguage: (topic: string) => void;
   setTopic: (topic: string) => void;
   setLevel: (level: string) => void;
+  setSpeakingRate: (rate: number) => void;
   setChatHistory: (chatHistory: Chat[]) => void;
   setDiscussions: (discussions: ChatSummary[]) => void;
 };

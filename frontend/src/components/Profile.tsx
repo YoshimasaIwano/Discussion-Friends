@@ -51,6 +51,18 @@ function Profile() {
     }
   };
 
+  const parseSummaryText = (text: string) => {
+    const mainPointsMatch = text.match(/Main points:\s(.*?)Conclusion:/s);
+    const conclusionMatch = text.match(/Conclusion:\s(.*?)Feedback:/s);
+    const feedbackMatch = text.match(/Feedback:\s(.*?)(?=\s[a-zA-Z]+:|\s*$)/s);
+
+    const mainPoints = mainPointsMatch ? mainPointsMatch[1] : "none";
+    const conclusion = conclusionMatch ? conclusionMatch[1] : "none";
+    const feedback = feedbackMatch ? feedbackMatch[1] : "none";
+
+    return { mainPoints, conclusion, feedback };
+  };
+
   return (
     <div className="profile-wrapper">
       {user?.photoURL ? (
@@ -78,18 +90,25 @@ function Profile() {
         </button>
       </div>
       {errorMessage && <p>{errorMessage}</p>}
-      <div className="chat-history-wrapper">
-        <h1>Latest Chat History</h1>
-        <ul className="chat-history-list">
-          {discussions.map((discussion, index) => (
+      <ul className="chat-history-list">
+        {discussions.map((discussion, index) => {
+          const { mainPoints, conclusion, feedback } = parseSummaryText(
+            discussion.summaryText
+          );
+          return (
             <div key={index}>
               <h3>{discussion.topic}</h3>
               <p>{discussion.datetime}</p>
-              <p>{discussion.summaryText}</p>
+              <h4>Main Points</h4>
+              <p>{mainPoints}</p>
+              <h4>Conclusion</h4>
+              <p>{conclusion}</p>
+              <h4>Feedback</h4>
+              <p>{feedback}</p>
             </div>
-          ))}
-        </ul>
-      </div>
+          );
+        })}
+      </ul>
     </div>
   );
 }

@@ -3,10 +3,18 @@ import { useDiscussion } from "../hooks/DiscussionContext";
 import { firestore } from "../firebase/firebase";
 import { useAuth } from "../firebase/AuthContent";
 import { languageDictionary } from "../types";
+import { Button, Container, Row, Col, Card } from "react-bootstrap";
 
 function Discussion() {
-  const { language, topic, level, chatHistory, setChatHistory, setDiscussions } =
-    useDiscussion();
+  const {
+    language,
+    topic,
+    level,
+    chatHistory,
+    speakingRate, 
+    setChatHistory,
+    setDiscussions,
+  } = useDiscussion();
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
@@ -40,9 +48,6 @@ function Discussion() {
           },
           body: JSON.stringify({
             text: chatHistory,
-            language,
-            topic,
-            level,
           }),
         });
 
@@ -83,6 +88,7 @@ function Discussion() {
           },
           audioConfig: {
             audioEncoding: "MP3",
+            speakingRate: speakingRate,
           },
         };
 
@@ -145,8 +151,6 @@ function Discussion() {
       const formData = new FormData();
       formData.append("audio", audioBlob, "audio.mp3");
       formData.append("language", language);
-      formData.append("topic", topic);
-      formData.append("level", level);
 
       const response = await fetch("/whisper", {
         method: "POST",
@@ -221,21 +225,66 @@ function Discussion() {
     }
   };
 
+  const buttonStyles = {
+    borderRadius: "50%",
+    padding: "1rem 1.5rem",
+    fontSize: "1.1rem",
+    width: "50%",
+    margin: "0 auto",
+  };
+
+
   return (
-    <div>
-      <div>
-        <h1>Audio Recorder</h1>
-        <button onClick={handleStartRecording} disabled={recording}>
-          Start Talking
-        </button>
-        <button onClick={handleStopRecording} disabled={!recording}>
-          Stop Talking
-        </button>
-      </div>
-      <div>
-        <button onClick={sendSummary}>Finish</button>
-      </div>
-    </div>
+    <Container fluid="md">
+      <Row className="mt-5 justify-content-center">
+        <Col xs={12} sm={10} md={8} lg={6}>
+          <Card>
+            <Card.Body className="text-center">
+              <Card.Title>Audio Recorder</Card.Title>
+              <div className="d-flex justify-content-around">
+                <Button
+                  variant="primary"
+                  onClick={handleStartRecording}
+                  disabled={recording}
+                  style={buttonStyles}
+                >
+                  Start Talking
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={handleStopRecording}
+                  disabled={!recording}
+                  style={buttonStyles}
+                >
+                  Stop Talking
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+      <Row className="mt-5 justify-content-center">
+        <Col xs={12} sm={8} md={6}>
+          <Card>
+            <Card.Body className="text-center">
+              <Card.Title>Chat</Card.Title>
+              <Card.Text>
+                {chatHistory.length > 1 && (
+                  <span>{chatHistory[chatHistory.length - 1].content}</span>
+                )}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+      <Row className="mt-5 justify-content-center">
+        <Col xs={12} sm={8} md={6} className="text-center">
+          <Button variant="success" onClick={sendSummary}>
+            Finish
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

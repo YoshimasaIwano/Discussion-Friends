@@ -8,11 +8,13 @@ const DiscussionContext = createContext<DiscussionContextType>({
   language: "",
   topic: "",
   level: "",
+  speakingRate: 1.0,
   chatHistory: [],
   discussions: [],
   setLanguage: () => {},
   setTopic: () => {},
   setLevel: () => {},
+  setSpeakingRate: ()=> {},
   setChatHistory: () => {},
   setDiscussions: () => {},
 });
@@ -29,6 +31,7 @@ export const DiscussionProvider: React.FC<DiscussionProviderProps> = ({
   const [language, setLanguage] = useState("en");
   const [topic, setTopic] = useState("");
   const [level, setLevel] = useState("");
+  const [speakingRate, setSpeakingRate] = useState(1.0);
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);
   const [discussions, setDiscussions] = useState<ChatSummary[]>([]);
   const { user } = useAuth();
@@ -56,11 +59,13 @@ export const DiscussionProvider: React.FC<DiscussionProviderProps> = ({
         language,
         topic,
         level,
+        speakingRate,
         chatHistory,
         discussions,
         setLanguage,
         setTopic,
         setLevel,
+        setSpeakingRate,
         setChatHistory,
         setDiscussions,
       }}
