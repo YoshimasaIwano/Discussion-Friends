@@ -280,19 +280,21 @@ function Discussion() {
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
           <Row className="gx-3 text-center ">
-            <Col xs={12} sm={4}>
+            <Col xs={12} sm={4} className="mx-auto">
               <div>
                 <strong>Language:</strong>
               </div>
-              <h2 className="capitalize-bold">{language}</h2>
+              <h3 className="capitalize-bold">
+                {languageDictionary[language].language}
+              </h3>
             </Col>
-            <Col xs={12} sm={4}>
+            <Col xs={12} sm={4} className="mx-auto">
               <div>
                 <strong>Topic:</strong>
               </div>
-              <h2 className="capitalize-bold">{topic}</h2>
+              <h3 className="capitalize-bold">{topic}</h3>
             </Col>
-            <Col xs={12} sm={4}>
+            <Col xs={12} sm={4} className="mx-auto">
               <Form.Group controlId="speakingRate">
                 <Form.Label>Speed</Form.Label>
                 <Form.Control

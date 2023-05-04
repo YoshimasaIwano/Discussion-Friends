@@ -110,30 +110,35 @@ function Profile() {
         <Col md={8}>
           <h2>Discussions</h2>
           <ListGroup className="discussions-list discussions-text">
-            {discussions.map((discussion, index) => {
-              const { mainPoints, conclusion, feedback } = parseSummaryText(
-                discussion.summaryText
-              );
-              return (
-                <Card key={index} className="mb-3">
-                  <Card.Body>
-                    <Card.Title className="text-capitalize font-weight-bold discussion-title">{discussion.topic}</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">
-                      {formatDate(discussion.datetime)}
-                    </Card.Subtitle>
-                    <Card.Text>
-                      <strong>Main Points:</strong> {mainPoints}
-                    </Card.Text>
-                    <Card.Text>
-                      <strong>Conclusion:</strong> {conclusion}
-                    </Card.Text>
-                    <Card.Text>
-                      <strong>Feedback:</strong> {feedback}
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-              );
-            })}
+            {discussions
+              .slice()
+              .reverse()
+              .map((discussion, index) => {
+                const { mainPoints, conclusion, feedback } = parseSummaryText(
+                  discussion.summaryText
+                );
+                return (
+                  <Card key={index} className="mb-3">
+                    <Card.Body>
+                      <Card.Title className="text-capitalize font-weight-bold discussion-title">
+                        {discussion.topic}
+                      </Card.Title>
+                      <Card.Subtitle className="mb-2 text-muted">
+                        {formatDate(discussion.datetime)}
+                      </Card.Subtitle>
+                      <Card.Text>
+                        <strong>Main Points:</strong> {mainPoints}
+                      </Card.Text>
+                      <Card.Text>
+                        <strong>Conclusion:</strong> {conclusion}
+                      </Card.Text>
+                      <Card.Text>
+                        <strong>Feedback:</strong> {feedback}
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                );
+              })}
           </ListGroup>
         </Col>
       </Row>

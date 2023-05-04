@@ -3,6 +3,7 @@ import { Button, Container, Form, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDiscussion } from "../hooks/DiscussionContext";
 import { useEffect } from "react";
+import { CSSTransition } from "react-transition-group";
 
 function Home() {
   const {
@@ -23,19 +24,25 @@ function Home() {
 
   useEffect(() => {
     if (language && topic && level && speakingRate) {
-      setLanguage("en")
-      setTopic("")
-      setLevel("")
-      setSpeakingRate(1.0)
+      setLanguage("en");
+      setTopic("");
+      setLevel("");
+      setSpeakingRate(1.0);
     }
   }, []);
 
   return (
     <Container className="text-center my-5 vh-100">
-      <h1 className="display-4">
-        AI Brain <span className="heading-gym fw-bold">Gym</span>
-      </h1>
-      <p className="lead mb-4">Why don't you train your brain at our "gym"?</p>
+      <CSSTransition in={true} timeout={1000} classNames="fade" appear>
+        <div>
+          <h1 className="display-4">
+            AI Brain <span className="heading-gym fw-bold">Gym</span>
+          </h1>
+          <p className="lead mb-4">
+            Why don't you train your brain at our "gym"?
+          </p>
+        </div>
+      </CSSTransition>
       <Form className="mx-auto">
         <Row>
           <Form.Group as={Col} className="px-ns-0" controlId="language">

@@ -102,6 +102,19 @@ body {
   font-weight: bold !important;
 }
 
+/* Home page */
+.fade-appear,
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-appear-active,
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+}
+
+
 @media screen and (max-width: 800px) {
   .text-small {
     font-size: 0.8rem !important;
