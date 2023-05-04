@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDiscussion } from "../hooks/DiscussionContext";
 import { firestore } from "../firebase/firebase";
 import { useAuth } from "../firebase/AuthContent";
 import { languageDictionary } from "../types";
-import { Button, Container, Row, Col, Card } from "react-bootstrap";
+import { Button, Container, Row, Col, Modal, Form } from "react-bootstrap";
 
 function Discussion() {
   const {
@@ -11,18 +12,28 @@ function Discussion() {
     topic,
     level,
     chatHistory,
-    speakingRate, 
+    speakingRate,
     setChatHistory,
     setDiscussions,
+    setSpeakingRate,
   } = useDiscussion();
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [transcribedText, setTranscribedText] = useState("");
-  const [responseText, setResponseText] = useState("");
   const audioChunks = useRef<Blob[]>([]);
   const { user } = useAuth();
+  const [transcribedText, setTranscribedText] = useState("");
+  const [responseText, setResponseText] = useState("");
+  const [sending, setSending] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
+  const [summaryText, setSummaryText] = useState("");
+  const navigate = useNavigate();
+
+  const goToHomePage = () => {
+    setShowSummary(false);
+    navigate("/");
+  };
 
   useEffect(() => {
     setChatHistory([
@@ -193,11 +204,12 @@ function Discussion() {
 
       setDiscussions([...currentDiscussions, chatSummary]);
 
-      console.log("Chat history added to Firestore");
+      // console.log("Chat history added to Firestore");
     }
   };
 
   const sendSummary = async () => {
+    setSending(true);
     try {
       const summaryResponse = await fetch("/summary", {
         method: "POST",
@@ -214,76 +226,155 @@ function Discussion() {
           `Error: ${summaryResponse.status} ${summaryResponse.statusText}`
         );
       }
-      const summaryText = await summaryResponse.json();
+      const receivedSummaryText = await summaryResponse.json();
+      setSummaryText(receivedSummaryText);
+      setShowSummary(true);
+
       if (user) {
-        await addToFirestore(summaryText);
+        await addToFirestore(receivedSummaryText);
       }
 
-      console.log("Summary sent successfully");
+      // console.log("Summary sent successfully");
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setSending(false);
     }
   };
 
-  const buttonStyles = {
-    borderRadius: "50%",
-    padding: "1rem 1.5rem",
-    fontSize: "1.1rem",
-    width: "50%",
-    margin: "0 auto",
+  const parseSummaryText = (text: string) => {
+    const mainPointsMatch = text.match(/Main points:\s(.*?)Conclusion:/s);
+    const conclusionMatch = text.match(/Conclusion:\s(.*?)Feedback:/s);
+    const feedbackMatch = text.match(/Feedback:\s(.*?)(?=\s[a-zA-Z]+:|\s*$)/s);
+
+    const mainPoints = mainPointsMatch ? mainPointsMatch[1] : "none";
+    const conclusion = conclusionMatch ? conclusionMatch[1] : "none";
+    const feedback = feedbackMatch ? feedbackMatch[1] : "none";
+
+    return { mainPoints, conclusion, feedback };
   };
 
-
   return (
-    <Container fluid="md" className="vh-100">
-      <Row className="mt-5 justify-content-center">
-        <Col xs={12} sm={10} md={8} lg={6}>
-          <Card>
-            <Card.Body className="text-center">
-              <Card.Title>Audio Recorder</Card.Title>
-              <div className="d-flex justify-content-around">
-                <Button
-                  variant="primary"
-                  onClick={handleStartRecording}
-                  disabled={recording}
-                  style={buttonStyles}
-                >
-                  Start Talking
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={handleStopRecording}
-                  disabled={!recording}
-                  style={buttonStyles}
-                >
-                  Stop Talking
-                </Button>
+    <Container className="vh-100">
+      <Row className="justify-content-center mt-5">
+        <Col xs={12} md={8} lg={6}>
+          <div className="d-flex justify-content-center mb-3">
+            <Button
+              onClick={handleStartRecording}
+              disabled={recording}
+              className="me-2 rounded-circle record-button mx-auto"
+            >
+              START
+            </Button>
+            <Button
+              onClick={handleStopRecording}
+              disabled={!recording}
+              variant="danger"
+              className="rounded-circle record-button mx-auto"
+            >
+              STOP
+            </Button>
+          </div>
+        </Col>
+      </Row>
+      <Row className="justify-content-center mt-3">
+        <Col xs={12} md={8} lg={6}>
+          <Row className="gx-3 text-center ">
+            <Col xs={12} sm={4}>
+              <div>
+                <strong>Language:</strong>
               </div>
-            </Card.Body>
-          </Card>
+              <h2 className="capitalize-bold">{language}</h2>
+            </Col>
+            <Col xs={12} sm={4}>
+              <div>
+                <strong>Topic:</strong>
+              </div>
+              <h2 className="capitalize-bold">{topic}</h2>
+            </Col>
+            <Col xs={12} sm={4}>
+              <Form.Group controlId="speakingRate">
+                <Form.Label>Speed</Form.Label>
+                <Form.Control
+                  type="range"
+                  min="0.25"
+                  max="4.0"
+                  step="0.01"
+                  value={speakingRate}
+                  onChange={(e) => setSpeakingRate(parseFloat(e.target.value))}
+                />
+                <p>{speakingRate.toFixed(2)}</p>
+              </Form.Group>
+            </Col>
+          </Row>
         </Col>
       </Row>
-      <Row className="mt-5 justify-content-center">
-        <Col xs={12} sm={8} md={6}>
-          <Card>
-            <Card.Body className="text-center">
-              <Card.Title>Chat</Card.Title>
-              <Card.Text>
-                {chatHistory.length > 1 && (
+      <Row className="justify-content-center mt-3">
+        <Col xs={12} md={8} lg={6}>
+          <div>
+            <h1>Transcription</h1>
+            <div>
+              {chatHistory.length > 1 && (
+                <div className="mb-3">
                   <span>{chatHistory[chatHistory.length - 1].content}</span>
-                )}
-              </Card.Text>
-            </Card.Body>
-          </Card>
+                </div>
+              )}
+            </div>
+          </div>
         </Col>
       </Row>
-      <Row className="mt-5 justify-content-center">
-        <Col xs={12} sm={8} md={6} className="text-center">
-          <Button variant="success" onClick={sendSummary}>
-            Finish
-          </Button>
+      <Row className="justify-content-center mt-3">
+        <Col xs={12} md={8} lg={6}>
+          <div className="d-flex justify-content-center">
+            <Button onClick={sendSummary} variant="success">
+              Finish
+            </Button>
+          </div>
         </Col>
       </Row>
+      <Modal
+        show={showSummary}
+        onHide={() => setShowSummary(false)}
+        centered
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Summary</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Modal.Body>
+            {(() => {
+              const { mainPoints, conclusion, feedback } =
+                parseSummaryText(summaryText);
+              return (
+                <>
+                  <h5 className="text-capitalize font-weight-bold">
+                    Main Points
+                  </h5>
+                  <p>{mainPoints}</p>
+                  <h5 className="text-capitalize font-weight-bold">
+                    Conclusion
+                  </h5>
+                  <p>{conclusion}</p>
+                  <h5 className="text-capitalize font-weight-bold">Feedback</h5>
+                  <p>{feedback}</p>
+                </>
+              );
+            })()}
+          </Modal.Body>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="d-flex justify-content-center">
+            <Button variant="secondary" onClick={goToHomePage}>
+              Home
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={sending} backdrop="static" keyboard={false} centered>
+        <Modal.Body className="text-center">Sending summary...</Modal.Body>
+      </Modal>
     </Container>
   );
 }

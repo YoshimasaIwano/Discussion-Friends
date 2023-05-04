@@ -91,6 +91,16 @@ body {
   border-radius: 3px;
 }
 
+/* discussion page */
+.record-button {
+  width: 5rem;
+  height: 5rem;
+}
+
+.capitalize-bold {
+  text-transform: capitalize !important;
+  font-weight: bold !important;
+}
 
 @media screen and (max-width: 800px) {
   .text-small {

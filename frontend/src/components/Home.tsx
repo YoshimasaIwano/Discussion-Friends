@@ -2,6 +2,7 @@
 import { Button, Container, Form, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDiscussion } from "../hooks/DiscussionContext";
+import { useEffect } from "react";
 
 function Home() {
   const {
@@ -19,6 +20,15 @@ function Home() {
   const handleStartDiscussion = () => {
     navigate("/Discussion");
   };
+
+  useEffect(() => {
+    if (language && topic && level && speakingRate) {
+      setLanguage("en")
+      setTopic("")
+      setLevel("")
+      setSpeakingRate(1.0)
+    }
+  }, []);
 
   return (
     <Container className="text-center my-5 vh-100">
