@@ -217,7 +217,8 @@ function Discussion() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          conversation: chatHistory,
+          messages: chatHistory,
+          language: languageDictionary[language].name,
         }),
       });
 

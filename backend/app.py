@@ -83,7 +83,7 @@ def chat():
 def summary():
     data = request.get_json()
     try:
-        summarized_text = summarize_conversation(data['conversation'])
+        summarized_text = summarize_conversation(data['messages'], data['language'])
         # print(summarized_text)
         return jsonify(summarized_text)
     except Exception as e:
