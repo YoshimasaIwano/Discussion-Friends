@@ -1,12 +1,10 @@
-import json
 from flask import Flask, request, jsonify
 from waitress import serve
 from google.cloud import storage
 import os
-import openai
 import os
-import whisper
 from werkzeug.utils import secure_filename
+from evaluate import evaluate_conversation
 
 from speech_to_text import audio_to_text
 from chat import chat_gpt_debater
@@ -83,9 +81,14 @@ def chat():
 def summary():
     data = request.get_json()
     try:
-        summarized_text = summarize_conversation(data['messages'], data['language'])
+        main_points, conclusion, feedback = summarize_conversation(data['messages'], data['language'])
+        print("main popints", main_points)
+        print("conclusion", conclusion)
+        print("feedback", feedback)
+        score = evaluate_conversation(data['messages'])
+        print("score", score)
         # print(summarized_text)
-        return jsonify(summarized_text)
+        return jsonify({'mainPoints': main_points, 'conclusion': conclusion, 'feedback': feedback, 'score': score})
     except Exception as e:
         return str(e), 500
 
