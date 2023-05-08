@@ -6,6 +6,32 @@ import { useAuth } from "../firebase/AuthContent";
 import { languageDictionary } from "../types";
 import { Button, Container, Row, Col, Modal, Form } from "react-bootstrap";
 
+type SummaryProps = {
+  topic: string;
+  datetime: string;
+  mainPoints: string;
+  conclusion: string;
+  feedback: string;
+  score: number;
+};
+
+function average(numbers: number[]): number {
+  if (numbers.length === 0) {
+    throw new Error("Empty array");
+  }
+
+  const sum = numbers.reduce((acc, current) => acc + current, 0);
+  const avg = sum / numbers.length;
+  return avg;
+}
+
+function sum(numbers: number[]): number {
+  return numbers.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0
+  );
+}
+
 function Discussion() {
   const {
     language,
@@ -27,7 +53,7 @@ function Discussion() {
   const [responseText, setResponseText] = useState("");
   const [sending, setSending] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
-  const [summaryText, setSummaryText] = useState("");
+  const [summaryContent, setSummaryContent] = useState<SummaryProps>();
   const navigate = useNavigate();
 
   const goToHomePage = () => {
@@ -181,7 +207,7 @@ function Discussion() {
     }
   };
 
-  const addToFirestore = async (summaryText: string) => {
+  const addToFirestore = async (summaryData: SummaryProps) => {
     if (user) {
       const userRef = firestore.collection("users").doc(user.uid);
 
@@ -190,24 +216,15 @@ function Discussion() {
       const userData = snapshot.data();
       const currentDiscussions = userData?.discussion ?? [];
 
-      // Create a new chat summary
-      const chatSummary = {
-        topic,
-        datetime: new Date().toISOString(),
-        summaryText,
-      };
-
       // Update the discussions array
       await userRef.update({
-        discussion: [...currentDiscussions, chatSummary],
+        discussion: [...currentDiscussions, summaryData],
       });
 
-      setDiscussions([...currentDiscussions, chatSummary]);
-
-      // console.log("Chat history added to Firestore");
+      setDiscussions([...currentDiscussions, summaryData]);
     }
   };
-
+  
   const sendSummary = async () => {
     setSending(true);
     try {
@@ -218,7 +235,7 @@ function Discussion() {
         },
         body: JSON.stringify({
           messages: chatHistory,
-          language: languageDictionary[language].name,
+          language: languageDictionary[language].language,
         }),
       });
 
@@ -227,32 +244,28 @@ function Discussion() {
           `Error: ${summaryResponse.status} ${summaryResponse.statusText}`
         );
       }
-      const receivedSummaryText = await summaryResponse.json();
-      setSummaryText(receivedSummaryText);
+      const receivedSummaryData = await summaryResponse.json();
+      // Create a new chat summary
+      const discussionSummary: SummaryProps = {
+        topic,
+        datetime: new Date().toISOString(),
+        mainPoints: receivedSummaryData.mainPoints,
+        conclusion: receivedSummaryData.conclusion,
+        feedback: receivedSummaryData.feedback,
+        score: sum(receivedSummaryData.score),
+      };
+      setSummaryContent(discussionSummary);
+
       setShowSummary(true);
 
       if (user) {
-        await addToFirestore(receivedSummaryText);
+        await addToFirestore(discussionSummary);
       }
-
-      // console.log("Summary sent successfully");
     } catch (error) {
       console.error("Error:", error);
     } finally {
       setSending(false);
     }
-  };
-
-  const parseSummaryText = (text: string) => {
-    const mainPointsMatch = text.match(/Main points:\s(.*?)Conclusion:/s);
-    const conclusionMatch = text.match(/Conclusion:\s(.*?)Feedback:/s);
-    const feedbackMatch = text.match(/Feedback:\s(.*?)(?=\s[a-zA-Z]+:|\s*$)/s);
-
-    const mainPoints = mainPointsMatch ? mainPointsMatch[1] : "none";
-    const conclusion = conclusionMatch ? conclusionMatch[1] : "none";
-    const feedback = feedbackMatch ? feedbackMatch[1] : "none";
-
-    return { mainPoints, conclusion, feedback };
   };
 
   return (
@@ -347,20 +360,23 @@ function Discussion() {
         <Modal.Body>
           <Modal.Body>
             {(() => {
-              const { mainPoints, conclusion, feedback } =
-                parseSummaryText(summaryText);
+              if (!summaryContent) {
+                return null;
+              }
               return (
                 <>
                   <h5 className="text-capitalize font-weight-bold">
                     Main Points
                   </h5>
-                  <p>{mainPoints}</p>
+                  <p>{summaryContent.mainPoints}</p>
                   <h5 className="text-capitalize font-weight-bold">
                     Conclusion
                   </h5>
-                  <p>{conclusion}</p>
+                  <p>{summaryContent.conclusion}</p>
                   <h5 className="text-capitalize font-weight-bold">Feedback</h5>
-                  <p>{feedback}</p>
+                  <p>{summaryContent.feedback}</p>
+                  <h5 className="text-capitalize font-weight-bold">Score</h5>
+                  <p>{summaryContent.score}</p>
                 </>
               );
             })()}

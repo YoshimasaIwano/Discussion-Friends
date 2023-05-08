@@ -60,18 +60,6 @@ function Profile() {
     }
   };
 
-  const parseSummaryText = (text: string) => {
-    const mainPointsMatch = text.match(/Main points:\s(.*?)Conclusion:/s);
-    const conclusionMatch = text.match(/Conclusion:\s(.*?)Feedback:/s);
-    const feedbackMatch = text.match(/Feedback:\s(.*?)(?=\s[a-zA-Z]+:|\s*$)/s);
-
-    const mainPoints = mainPointsMatch ? mainPointsMatch[1] : "none";
-    const conclusion = conclusionMatch ? conclusionMatch[1] : "none";
-    const feedback = feedbackMatch ? feedbackMatch[1] : "none";
-
-    return { mainPoints, conclusion, feedback };
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
@@ -114,9 +102,6 @@ function Profile() {
               .slice()
               .reverse()
               .map((discussion, index) => {
-                const { mainPoints, conclusion, feedback } = parseSummaryText(
-                  discussion.summaryText
-                );
                 return (
                   <Card key={index} className="mb-3">
                     <Card.Body>
@@ -127,13 +112,16 @@ function Profile() {
                         {formatDate(discussion.datetime)}
                       </Card.Subtitle>
                       <Card.Text>
-                        <strong>Main Points:</strong> {mainPoints}
+                        <strong>Score:</strong> {discussion.score}
                       </Card.Text>
                       <Card.Text>
-                        <strong>Conclusion:</strong> {conclusion}
+                        <strong>Main Points:</strong> {discussion.mainPoints}
                       </Card.Text>
                       <Card.Text>
-                        <strong>Feedback:</strong> {feedback}
+                        <strong>Conclusion:</strong> {discussion.conclusion}
+                      </Card.Text>
+                      <Card.Text>
+                        <strong>Feedback:</strong> {discussion.feedback}
                       </Card.Text>
                     </Card.Body>
                   </Card>

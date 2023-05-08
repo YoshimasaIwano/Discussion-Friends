@@ -41,7 +41,10 @@ export type Chat = {
 export type ChatSummary = {
   topic: string;
   datetime: string;
-  summaryText: string;
+  mainPoints: string;
+  conclusion: string;
+  feedback: string;
+  score: number;
 };
 
 export type DiscussionContextType = {
