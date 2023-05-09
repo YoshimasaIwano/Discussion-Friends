@@ -11,6 +11,7 @@ import {
 import { firestore } from "../firebase/firebase";
 import { useAuth } from "../firebase/AuthContent";
 import { useDiscussion } from "../hooks/DiscussionContext";
+import { sum } from "../functions/utils";
 
 function Profile() {
   const { user } = useAuth();
@@ -112,7 +113,7 @@ function Profile() {
                         {formatDate(discussion.datetime)}
                       </Card.Subtitle>
                       <Card.Text>
-                        <strong>Score:</strong> {discussion.score}
+                        <strong>Score:</strong> {sum(discussion.score)}
                       </Card.Text>
                       <Card.Text>
                         <strong>Main Points:</strong> {discussion.mainPoints}

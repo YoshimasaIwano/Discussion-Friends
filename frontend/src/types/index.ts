@@ -38,13 +38,13 @@ export type Chat = {
   content: string;
 };
 
-export type ChatSummary = {
+export type DiscussionSummary = {
   topic: string;
   datetime: string;
   mainPoints: string;
   conclusion: string;
   feedback: string;
-  score: number;
+  score: number[];
 };
 
 export type DiscussionContextType = {
@@ -53,13 +53,13 @@ export type DiscussionContextType = {
   level: string;
   speakingRate: number;
   chatHistory: Chat[];
-  discussions: ChatSummary[];
+  discussions: DiscussionSummary[];
   darkMode: boolean;
   setLanguage: (topic: string) => void;
   setTopic: (topic: string) => void;
   setLevel: (level: string) => void;
   setSpeakingRate: (rate: number) => void;
   setChatHistory: (chatHistory: Chat[]) => void;
-  setDiscussions: (discussions: ChatSummary[]) => void;
+  setDiscussions: (discussions: DiscussionSummary[]) => void;
   toggleDarkMode: (event: React.MouseEvent) => void;
 };

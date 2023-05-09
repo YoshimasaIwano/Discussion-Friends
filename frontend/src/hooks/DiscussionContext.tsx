@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { firestore } from "../firebase/firebase";
 import { useAuth } from "../firebase/AuthContent";
-import { Chat, ChatSummary, DiscussionContextType } from "../types";
+import { Chat, DiscussionSummary, DiscussionContextType } from "../types";
 
 const DiscussionContext = createContext<DiscussionContextType>({
   language: "",
@@ -35,7 +35,7 @@ export const DiscussionProvider: React.FC<DiscussionProviderProps> = ({
   const [level, setLevel] = useState("");
   const [speakingRate, setSpeakingRate] = useState(1.0);
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);
-  const [discussions, setDiscussions] = useState<ChatSummary[]>([]);
+  const [discussions, setDiscussions] = useState<DiscussionSummary[]>([]);
   const [darkMode, setDarkMode] = useState(false);
   const { user } = useAuth();
   useEffect(() => {

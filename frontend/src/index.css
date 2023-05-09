@@ -97,9 +97,44 @@ body {
   height: 5rem;
 }
 
+.start-button {
+  background-color: #3336ff !important; 
+  border-color: #3336ff !important; 
+  color: #fff;
+}
+.start-button:hover,
+.start-button:focus {
+  background-color: #333ccf !important; 
+  border-color: #333ccf !important; 
+  color: #fff; 
+}
+
+.stop-button {
+  background-color: #ff0000 !important; 
+  border-color: #ff0000 !important; 
+  color: #fff;
+}
+
+.stop-button:hover,
+.stop-button:focus {
+  background-color: #d90000 !important; 
+  border-color: #d90000 !important; 
+  color: #fff; 
+}
+
 .capitalize-bold {
   text-transform: capitalize !important;
   font-weight: bold !important;
+}
+
+.user {
+  color: #007bff;
+  font-weight: bold;
+}
+
+.assistant {
+  color: #28a745;
+  font-weight: bold;
 }
 
 /* Home page */

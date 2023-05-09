@@ -3,34 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useDiscussion } from "../hooks/DiscussionContext";
 import { firestore } from "../firebase/firebase";
 import { useAuth } from "../firebase/AuthContent";
-import { languageDictionary } from "../types";
-import { Button, Container, Row, Col, Modal, Form } from "react-bootstrap";
-
-type SummaryProps = {
-  topic: string;
-  datetime: string;
-  mainPoints: string;
-  conclusion: string;
-  feedback: string;
-  score: number;
-};
-
-function average(numbers: number[]): number {
-  if (numbers.length === 0) {
-    throw new Error("Empty array");
-  }
-
-  const sum = numbers.reduce((acc, current) => acc + current, 0);
-  const avg = sum / numbers.length;
-  return avg;
-}
-
-function sum(numbers: number[]): number {
-  return numbers.reduce(
-    (accumulator, currentValue) => accumulator + currentValue,
-    0
-  );
-}
+import { languageDictionary, DiscussionSummary } from "../types";
+import { Button, Container, Row, Col, Modal, Form, Card } from "react-bootstrap";
 
 function Discussion() {
   const {
@@ -48,12 +22,13 @@ function Discussion() {
     null
   );
   const audioChunks = useRef<Blob[]>([]);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const { user } = useAuth();
   const [transcribedText, setTranscribedText] = useState("");
   const [responseText, setResponseText] = useState("");
   const [sending, setSending] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
-  const [summaryContent, setSummaryContent] = useState<SummaryProps>();
+  const [summaryContent, setSummaryContent] = useState<DiscussionSummary>();
   const navigate = useNavigate();
 
   const goToHomePage = () => {
@@ -110,6 +85,7 @@ function Discussion() {
   useEffect(() => {
     if (responseText) {
       const speakText = async () => {
+        setIsSpeaking(true);
         const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
         const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
 
@@ -149,6 +125,7 @@ function Discussion() {
         } catch (error) {
           console.error("Error:", error);
         } finally {
+          setIsSpeaking(false);
         }
       };
       speakText();
@@ -207,7 +184,7 @@ function Discussion() {
     }
   };
 
-  const addToFirestore = async (summaryData: SummaryProps) => {
+  const addToFirestore = async (summaryData: DiscussionSummary) => {
     if (user) {
       const userRef = firestore.collection("users").doc(user.uid);
 
@@ -224,7 +201,7 @@ function Discussion() {
       setDiscussions([...currentDiscussions, summaryData]);
     }
   };
-  
+
   const sendSummary = async () => {
     setSending(true);
     try {
@@ -246,13 +223,13 @@ function Discussion() {
       }
       const receivedSummaryData = await summaryResponse.json();
       // Create a new chat summary
-      const discussionSummary: SummaryProps = {
+      const discussionSummary: DiscussionSummary = {
         topic,
         datetime: new Date().toISOString(),
         mainPoints: receivedSummaryData.mainPoints,
         conclusion: receivedSummaryData.conclusion,
         feedback: receivedSummaryData.feedback,
-        score: sum(receivedSummaryData.score),
+        score: receivedSummaryData.score,
       };
       setSummaryContent(discussionSummary);
 
@@ -271,27 +248,6 @@ function Discussion() {
   return (
     <Container className="vh-100">
       <Row className="justify-content-center mt-5">
-        <Col xs={12} md={8} lg={6}>
-          <div className="d-flex justify-content-center mb-3">
-            <Button
-              onClick={handleStartRecording}
-              disabled={recording}
-              className="me-2 rounded-circle record-button mx-auto"
-            >
-              START
-            </Button>
-            <Button
-              onClick={handleStopRecording}
-              disabled={!recording}
-              variant="danger"
-              className="rounded-circle record-button mx-auto"
-            >
-              STOP
-            </Button>
-          </div>
-        </Col>
-      </Row>
-      <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
           <Row className="gx-3 text-center ">
             <Col xs={12} sm={4} className="mx-auto">
@@ -327,22 +283,50 @@ function Discussion() {
       </Row>
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
-          <div>
-            <h1>Transcription</h1>
-            <div>
-              {chatHistory.length > 1 && (
-                <div className="mb-3">
-                  <span>{chatHistory[chatHistory.length - 1].content}</span>
-                </div>
-              )}
-            </div>
+          <div className="d-flex justify-content-center mb-3">
+            <Button
+              onClick={handleStartRecording}
+              disabled={recording}
+              className="me-2 rounded-circle record-button start-button mx-auto"
+            >
+              START
+            </Button>
+            <Button
+              onClick={handleStopRecording}
+              disabled={!recording}
+              className="rounded-circle record-button stop-button mx-auto"
+            >
+              STOP
+            </Button>
           </div>
         </Col>
       </Row>
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
+          <Card bg="light">
+            <Card.Header as="h5" className="text-center">
+              Transcription
+            </Card.Header>
+            <Card.Body>
+              {chatHistory.length > 1 && (
+                <div
+                  className={`mb-3 ${chatHistory[chatHistory.length - 1].role}`}
+                >
+                  <span>{chatHistory[chatHistory.length - 1].content}</span>
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+      <Row className="justify-content-center mt-3">
+        <Col xs={12} md={8} lg={6}>
           <div className="d-flex justify-content-center">
-            <Button onClick={sendSummary} variant="success">
+            <Button
+              onClick={sendSummary}
+              variant="success"
+              disabled={isSpeaking}
+            >
               Finish
             </Button>
           </div>
