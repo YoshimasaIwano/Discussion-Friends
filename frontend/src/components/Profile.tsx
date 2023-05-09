@@ -20,14 +20,17 @@ function Profile() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { discussions } = useDiscussion();
 
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
+      await handleUpload(e.target.files[0]);
     }
   };
 
-  const handleUpload = async () => {
-    if (user && selectedFile) {
+  const handleUpload = async (selectedFile: File) => {
+    if (user) {
       setIsLoading(true);
       setErrorMessage(null);
       try {
@@ -68,7 +71,7 @@ function Profile() {
 
   return (
     <Container className="py-4">
-      <Row className="my-4 py-4">
+      <Row className="my-4 py-4 text-center">
         <Col md={4}>
           {user?.photoURL ? (
             <img
@@ -80,20 +83,21 @@ function Profile() {
             <p>No profile picture available</p>
           )}
           <h3>{user?.displayName}</h3>
-          <Form.Group>
+          <Form.Group controlId="formFile" className="d-none">
             <Form.Control
               type="file"
               accept="image/*"
               onChange={handleFileInputChange}
             />
-            <Button
-              onClick={handleUpload}
-              disabled={isLoading}
-              className="mt-3"
-            >
-              {isLoading ? "Uploading..." : "Upload"}
-            </Button>
           </Form.Group>
+          <Button
+            disabled={isLoading}
+            className="my-2"
+            as="label"
+            htmlFor="formFile"
+          >
+            {isLoading ? "Uploading..." : "Select Image"}
+          </Button>
           {errorMessage && <p className="text-danger">{errorMessage}</p>}
         </Col>
         <Col md={8}>

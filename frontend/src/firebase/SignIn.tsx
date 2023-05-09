@@ -58,7 +58,7 @@ function SignIn() {
 
   return (
     <div className={darkMode ? "dark-mode " : ""}>
-      <Container className="bg-light text-dark" fluid="lg">
+      <Container className="min-vh-100 bg-light text-dark" fluid="lg">
         {!user ? (
           <Row className="vh-100 align-items-center">
             <Col className="text-center">
