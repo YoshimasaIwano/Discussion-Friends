@@ -5,6 +5,7 @@ import { firestore } from "../firebase/firebase";
 import { useAuth } from "../firebase/AuthContent";
 import { languageDictionary, DiscussionSummary } from "../types";
 import { Button, Container, Row, Col, Modal, Form, Card } from "react-bootstrap";
+import { sum } from "../functions/utils";
 
 function Discussion() {
   const {
@@ -23,6 +24,7 @@ function Discussion() {
   );
   const audioChunks = useRef<Blob[]>([]);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isReadyToStart, setIsReadyToStart] = useState(true);
   const { user } = useAuth();
   const [transcribedText, setTranscribedText] = useState("");
   const [responseText, setResponseText] = useState("");
@@ -121,11 +123,16 @@ function Discussion() {
           const responseData = await response.json();
           const audioContent = responseData.audioContent;
           const audio = new Audio(`data:audio/mp3;base64,${audioContent}`);
+
+          // Add an event listener for the ended event to set isSpeaking to false
+          audio.addEventListener("ended", () => {
+            setIsSpeaking(false);
+            setIsReadyToStart(true);
+          });
           audio.play();
         } catch (error) {
           console.error("Error:", error);
         } finally {
-          setIsSpeaking(false);
         }
       };
       speakText();
@@ -133,6 +140,9 @@ function Discussion() {
   }, [responseText]);
 
   const handleStartRecording = async () => {
+    // Set isSpeaking to true before playing the audio
+    setIsSpeaking(true);
+    setIsReadyToStart(false);
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
 
@@ -286,7 +296,7 @@ function Discussion() {
           <div className="d-flex justify-content-center mb-3">
             <Button
               onClick={handleStartRecording}
-              disabled={recording}
+              disabled={recording || !isReadyToStart}
               className="me-2 rounded-circle record-button start-button mx-auto"
             >
               START
@@ -360,7 +370,7 @@ function Discussion() {
                   <h5 className="text-capitalize font-weight-bold">Feedback</h5>
                   <p>{summaryContent.feedback}</p>
                   <h5 className="text-capitalize font-weight-bold">Score</h5>
-                  <p>{summaryContent.score}</p>
+                  <p>{sum(summaryContent.score)}</p>
                 </>
               );
             })()}

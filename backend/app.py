@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify
 from waitress import serve
 from google.cloud import storage
 import os
-import os
 from werkzeug.utils import secure_filename
+from concurrent.futures import ThreadPoolExecutor
 from evaluate import evaluate_conversation
 
 from speech_to_text import audio_to_text
@@ -81,13 +81,14 @@ def chat():
 def summary():
     data = request.get_json()
     try:
-        main_points, conclusion, feedback = summarize_conversation(data['messages'], data['language'])
-        print("main popints", main_points)
-        print("conclusion", conclusion)
-        print("feedback", feedback)
-        score = evaluate_conversation(data['messages'])
-        print("score", score)
-        # print(summarized_text)
+        # Use a ThreadPoolExecutor to run the functions concurrently
+        with ThreadPoolExecutor() as executor:
+            future_summary = executor.submit(summarize_conversation, data['messages'], data['language'])
+            future_score = executor.submit(evaluate_conversation, data['messages'])
+
+            main_points, conclusion, feedback = future_summary.result()
+            score = future_score.result()
+
         return jsonify({'mainPoints': main_points, 'conclusion': conclusion, 'feedback': feedback, 'score': score})
     except Exception as e:
         return str(e), 500

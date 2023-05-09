@@ -71,8 +71,8 @@ function Profile() {
 
   return (
     <Container className="py-4">
-      <Row className="my-4 py-4 text-center">
-        <Col md={4}>
+      <Row className="my-4 py-4">
+        <Col md={4} className="text-center">
           {user?.photoURL ? (
             <img
               src={user.photoURL}

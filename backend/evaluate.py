@@ -5,7 +5,7 @@ import re
 def evaluate_conversation(messages):
     messages.append({"role": "system", "content":
                                  """
-                                 Evaluate the conversation 0 to 10 for each of these 10 points.
+                                 Evaluate the user's discussion skills strictly 0 to 10 for each of these 10 points.
                                  1. Clarity: Are the participants expressing their ideas and opinions clearly and coherently? Is the language used easily understood by everyone involved?
                                  2. Relevance: Are the topics and arguments raised pertinent to the main subject or theme? Do the participants stay focused on the issue at hand?
                                  3. Depth: Do the participants engage in thoughtful analysis and exploration of the subject matter? Are the arguments supported by evidence or logical reasoning?
@@ -16,7 +16,7 @@ def evaluate_conversation(messages):
                                  8. Balance: Is there a fair distribution of speaking time among the participants? Are all voices and opinions given equal opportunity to be heard?
                                  9. Engagement: Are the participants genuinely interested and invested in the conversation? Do they contribute meaningfully to the discussion?
                                  10. Progress: Does the discussion lead to new insights, understanding, or solutions? Is there a sense of movement or development in the conversation?
-                                 Return the score of each of these 10 points.
+                                 Return the score of each of these 10 points in this format.
                                     i.e)
                                     1. 2
                                     2. 3
@@ -47,6 +47,6 @@ def evaluate_conversation(messages):
             score = int(score_match.group(1))
             scores.append(score)
         else:
-            scores.append(None)
+            scores.append(0)
 
     return scores
