@@ -8,7 +8,7 @@ def chat_gpt_debater(messages):
         max_tokens=256,
         n=1,
         stop=None,
-        temperature=0.2,
+        temperature=0.5,
     )
 
     return response.choices[-1].message.content

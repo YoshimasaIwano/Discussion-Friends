@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { firebase, firestore } from "./firebase";
 import { useAuth } from "./AuthContent";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Modal, Button } from "react-bootstrap";
 import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
 import App from "../App";
@@ -12,6 +12,7 @@ function SignIn() {
   const { user } = useAuth();
   const uiRef = useRef<firebaseui.auth.AuthUI | null>(null);
   const signInContainerRef = useRef<HTMLDivElement | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const saveUserData = async (user: firebase.User) => {
     const userRef = firestore.collection("users").doc(user.uid);
@@ -76,6 +77,67 @@ function SignIn() {
       </Container>
     </div>
   );
+
+  // Using popup
+  // useEffect(() => {
+  //   if (user) {
+  //     saveUserData(user);
+  //   }
+  //   if (showModal && !user && signInContainerRef.current) {
+  //     if (!uiRef.current) {
+  //       uiRef.current = new firebaseui.auth.AuthUI(firebase.auth());
+  //     }
+
+  //     const uiConfig = {
+  //       callbacks: {
+  //         signInSuccessWithAuthResult: () => {
+  //           setShowModal(false);
+  //           return false;
+  //         },
+  //       },
+  //       signInOptions: [
+  //         firebase.auth.EmailAuthProvider.PROVIDER_ID,
+  //         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+  //       ],
+  //     };
+
+  //     uiRef.current.start("#firebaseui-auth-container", uiConfig);
+  //   }
+  // }, [user, showModal]);
+
+  // const handleShowModal = () => {
+  //   setShowModal(true);
+  // };
+
+  // return (
+  //   <div className={darkMode ? "dark-mode " : ""}>
+  //     <Container className="min-vh-100 bg-light text-dark" fluid="lg">
+  //       {!user ? (
+  //         <Row className="vh-100 align-items-center">
+  //           <Col className="text-center">
+  //             <h1 className="display-4">Welcome Back</h1>
+  //             <p className="lead mb-4">Improve your learning productivity</p>
+  //             <Button onClick={handleShowModal}>Sign In</Button>
+  //             <Modal show={showModal} onHide={() => setShowModal(false)}>
+  //               <Modal.Header closeButton>
+  //                 <Modal.Title>Sign In</Modal.Title>
+  //               </Modal.Header>
+  //               <Modal.Body>
+  //                 <div
+  //                   id="firebaseui-auth-container"
+  //                   ref={signInContainerRef}
+  //                 ></div>
+  //               </Modal.Body>
+  //             </Modal>
+  //           </Col>
+  //         </Row>
+  //       ) : (
+  //         <App />
+  //       )}
+  //     </Container>
+  //   </div>
+  // );
+
 }
 
 export default SignIn;

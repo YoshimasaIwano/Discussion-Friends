@@ -257,9 +257,9 @@ function Discussion() {
 
   return (
     <Container className="vh-100">
-      <Row className="justify-content-center mt-5">
+      <Row className="justify-content-center mt-5 ">
         <Col xs={12} md={8} lg={6}>
-          <Row className="gx-3 text-center ">
+          <Row className="gx-3 text-center">
             <Col xs={12} sm={4} className="mx-auto">
               <div>
                 <strong>Language:</strong>
@@ -318,11 +318,17 @@ function Discussion() {
               Transcription
             </Card.Header>
             <Card.Body>
-              {chatHistory.length > 1 && (
+              {chatHistory.length > 1 ? (
                 <div
                   className={`mb-3 ${chatHistory[chatHistory.length - 1].role}`}
                 >
                   <span>{chatHistory[chatHistory.length - 1].content}</span>
+                </div>
+              ) : (
+                <div className="mb-3 text-center">
+                  <span>
+                    Start to talk and you will see each transcription here
+                  </span>
                 </div>
               )}
             </Card.Body>
@@ -386,7 +392,10 @@ function Discussion() {
       </Modal>
 
       <Modal show={sending} backdrop="static" keyboard={false} centered>
-        <Modal.Body className="text-center">Sending summary...</Modal.Body>
+        <Modal.Body className="text-center justify-content-center align-items-center d-flex">
+          <p>Sending summary...</p>
+          <span className="spinner mx-auto"></span>
+        </Modal.Body>
       </Modal>
     </Container>
   );

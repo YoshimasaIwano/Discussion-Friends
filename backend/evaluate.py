@@ -5,7 +5,7 @@ import re
 def evaluate_conversation(messages):
     messages.append({"role": "system", "content":
                                  """
-                                 Evaluate the user's discussion skills strictly 0 to 10 for each of these 10 points.
+                                 Evaluate the user's discussion skills very strictly 0 to 10 for each of these 10 points.
                                  1. Clarity: Are the participants expressing their ideas and opinions clearly and coherently? Is the language used easily understood by everyone involved?
                                  2. Relevance: Are the topics and arguments raised pertinent to the main subject or theme? Do the participants stay focused on the issue at hand?
                                  3. Depth: Do the participants engage in thoughtful analysis and exploration of the subject matter? Are the arguments supported by evidence or logical reasoning?

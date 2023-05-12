@@ -137,6 +137,23 @@ body {
   font-weight: bold;
 }
 
+@keyframes spinning {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  display: inline-block;
+  border: 1.0rem solid rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  border-top-color: #000;
+  animation: spinning 1s linear infinite;
+}
+
 /* Home page */
 .fade-appear,
 .fade-enter {
