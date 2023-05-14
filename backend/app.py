@@ -80,6 +80,7 @@ def chat():
 @app.route('/summary', methods=['POST'])
 def summary():
     data = request.get_json()
+    print(data)
     try:
         # Use a ThreadPoolExecutor to run the functions concurrently
         with ThreadPoolExecutor() as executor:

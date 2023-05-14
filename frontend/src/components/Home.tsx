@@ -118,6 +118,16 @@ function Home() {
               Start Discussion
             </Button>
           </Col>
+          <Col xs={12}>
+            <Button
+              className="mt-auto"
+              style={{ backgroundColor: 'blue', borderColor: 'blue' }}
+              // variant="primary"
+              onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSe5xtkBSU-1_3oX4wySaD0i25dX2rGiGv-2lPt-HDPd-dGLYg/viewform', '_blank')}
+            >
+              Give Feedback to get early access
+            </Button>
+          </Col>
         </Row>
       </Form>
     </Container>
