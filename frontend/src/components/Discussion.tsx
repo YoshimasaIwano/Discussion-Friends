@@ -9,11 +9,12 @@ import {
   Container,
   Row,
   Col,
-  Modal,
   Form,
   Card,
 } from "react-bootstrap";
-import { sum } from "../functions/utils";
+import SummaryModal from "./SummaryModal";
+import SendingSummaryModal from "./SendingSummaryModal";
+import LimitModal from "./LimitModal";
 
 function Discussion() {
   const {
@@ -31,7 +32,7 @@ function Discussion() {
     null
   );
   const audioChunks = useRef<Blob[]>([]);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isReadyToFinish, setIsReadyToFinish] = useState(false);
   const [isReadyToStart, setIsReadyToStart] = useState(true);
   const { user } = useAuth();
   const [transcribedText, setTranscribedText] = useState("");
@@ -97,7 +98,7 @@ function Discussion() {
   useEffect(() => {
     if (responseText) {
       const speakText = async () => {
-        setIsSpeaking(true);
+        setIsReadyToFinish(false);
         const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
         const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
 
@@ -136,7 +137,7 @@ function Discussion() {
 
           // Add an event listener for the ended event to set isSpeaking to false
           audio.addEventListener("ended", () => {
-            setIsSpeaking(false);
+            setIsReadyToFinish(true);
             setIsReadyToStart(true);
           });
           audio.play();
@@ -162,7 +163,7 @@ function Discussion() {
         return currentDiscussions;
       }
     };
-    
+
     const checkDiscussionCount = async () => {
       if (user) {
         // Assuming you have a function to get the current user's discussions...
@@ -189,14 +190,15 @@ function Discussion() {
           setShowLimitReached(true);
         }
       }
-
-      checkDiscussionCount();
+      
     };
+
+    checkDiscussionCount();
   }, []);
 
   const handleStartRecording = async () => {
     // Set isSpeaking to true before playing the audio
-    setIsSpeaking(true);
+    setIsReadyToFinish(false);
     setIsReadyToStart(false);
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
@@ -398,83 +400,28 @@ function Discussion() {
             <Button
               onClick={sendSummary}
               variant="success"
-              disabled={isSpeaking}
+              disabled={!isReadyToFinish}
             >
               Finish
             </Button>
           </div>
         </Col>
       </Row>
-      <Modal
+      <SummaryModal
         show={showSummary}
         onHide={() => setShowSummary(false)}
-        centered
-        size="lg"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Summary</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Modal.Body>
-            {(() => {
-              if (!summaryContent) {
-                return null;
-              }
-              return (
-                <>
-                  <h5 className="text-capitalize font-weight-bold">
-                    Main Points
-                  </h5>
-                  <p>{summaryContent.mainPoints}</p>
-                  <h5 className="text-capitalize font-weight-bold">
-                    Conclusion
-                  </h5>
-                  <p>{summaryContent.conclusion}</p>
-                  <h5 className="text-capitalize font-weight-bold">Feedback</h5>
-                  <p>{summaryContent.feedback}</p>
-                  <h5 className="text-capitalize font-weight-bold">Score</h5>
-                  <p>{sum(summaryContent.score)}</p>
-                </>
-              );
-            })()}
-          </Modal.Body>
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="d-flex justify-content-center">
-            <Button variant="secondary" onClick={goToHomePage}>
-              Home
-            </Button>
-          </div>
-        </Modal.Footer>
-      </Modal>
+        summaryContent={summaryContent}
+        goToHomePage={goToHomePage}
+      />
 
-      <Modal show={sending} backdrop="static" keyboard={false} centered>
-        <Modal.Body className="">
-          <p className="mx-auto">Sending summary...</p>
-          <span className="spinner mx-auto"></span>
-        </Modal.Body>
-      </Modal>
+      {sending && <SendingSummaryModal />}
 
-      <Modal
-        show={showLimitReached}
-        onHide={() => setShowLimitReached(false)}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Limit Reached</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          You have reached the limit of 5 discussions per month. Please wait
-          until next month to start a new discussion.
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="d-flex justify-content-center">
-            <Button variant="secondary" onClick={goToHomePage}>
-              Home
-            </Button>
-          </div>
-        </Modal.Footer>
-      </Modal>
+      {showLimitReached && (
+        <LimitModal
+          onHide={() => setShowLimitReached(false)}
+          goToHomePage={goToHomePage}
+        />
+      )}
     </Container>
   );
 }

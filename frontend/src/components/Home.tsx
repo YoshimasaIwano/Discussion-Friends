@@ -131,7 +131,7 @@ function Home() {
           <img
             src={GoogleFormLogo}
             alt="Google Form"
-            style={{ width: "32px", height: "32px", marginRight: "20px" }}
+            style={{ width: "48px", height: "48px", marginRight: "20px" }}
           />
         </a>
         <a
@@ -142,7 +142,7 @@ function Home() {
           <img
             src={TwitterLogo}
             alt="Share on Twitter"
-            style={{ width: "32px", height: "32px" }}
+            style={{ width: "48px", height: "48px" }}
           />
         </a>
       </div>

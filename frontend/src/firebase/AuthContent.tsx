@@ -28,6 +28,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userGender, setUserGender] = useState("");
   const [userOccupation, setUserOccupation] = useState("");
 
+  const isUserDataComplete =
+    userGeneration && userGender && userOccupation ? true : false;
+
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       setUser(user);
@@ -45,6 +48,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               setUserGeneration(data?.generation);
               setUserGender(data?.gender);
               setUserOccupation(data?.occupation);
+
+              // Check if user has already completed their profile
+              if (!data?.hasCompletedProfile) {
+                setShowModal(true);
+              }
             } else {
               // No such document or the user hasn't completed their profile
               setShowModal(true);
@@ -59,22 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const isUserDataComplete =
-    userGeneration && userGender && userOccupation ? true : false;
-
-  useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      setUser(user);
-      setInitializing(false);
-      if (user && !isUserDataComplete) {
-        setShowModal(true);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [userGeneration, userGender, userOccupation, isUserDataComplete]);
-
-  const handleFormSubmit = (e: { preventDefault: () => void; }) => {
+  const handleFormSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     // Save user info to Firestore
@@ -83,17 +76,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       firestore
         .collection("users")
         .doc(user.uid)
-        .update({
-          generation: userGeneration,
-          gender: userGender,
-          occupation: userOccupation,
-        })
+        .update(
+          {
+            generation: userGeneration,
+            gender: userGender,
+            occupation: userOccupation,
+            hasCompletedProfile: true, // set the flag indicating the user has completed their profile
+          },
+        ) 
         .then(() => {
           setShowModal(false);
         });
     }
   };
-
+  
   return (
     <AuthContext.Provider value={{ user, initializing }}>
       <Modal

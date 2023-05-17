@@ -125,14 +125,14 @@ function Profile() {
                   <Col>
                     <Card
                       key={index}
-                      className="mb-2 cursor-pointer card-discussion"
+                      className="mb-2 cursor-pointer card-discussion card-background"
                       onClick={() => handleDiscussionClick(discussion)}
                     >
                       <Card.Body className="px-1 text-center">
                         <Card.Title className="text-capitalize font-weight-bold discussion-title">
                           {discussion.topic}
                         </Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">
+                        <Card.Subtitle className="mb-2 ">
                           {formatDate(discussion.datetime)}
                         </Card.Subtitle>
                         <div className="d-flex ">

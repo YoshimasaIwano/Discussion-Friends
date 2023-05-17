@@ -85,7 +85,11 @@ body {
   font-size: 1.5rem !important;
 }
 
-.discussions-list {
+.card-background {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* .discussions-list {
   max-height: 600px;
   overflow-y: auto;
 }
@@ -101,7 +105,7 @@ body {
 .discussions-list::-webkit-scrollbar-thumb {
   background-color: #6c757d;
   border-radius: 3px;
-}
+} */
 
 /* discussion page */
 .record-button {
@@ -177,7 +181,6 @@ body {
   opacity: 1;
   transition: opacity 1000ms ease-in;
 }
-
 
 @media screen and (max-width: 800px) {
   .text-small {
