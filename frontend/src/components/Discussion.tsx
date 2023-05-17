@@ -4,7 +4,15 @@ import { useDiscussion } from "../hooks/DiscussionContext";
 import { firestore } from "../firebase/firebase";
 import { useAuth } from "../firebase/AuthContent";
 import { languageDictionary, DiscussionSummary } from "../types";
-import { Button, Container, Row, Col, Modal, Form, Card } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Row,
+  Col,
+  Modal,
+  Form,
+  Card,
+} from "react-bootstrap";
 import { sum } from "../functions/utils";
 
 function Discussion() {
@@ -31,6 +39,8 @@ function Discussion() {
   const [sending, setSending] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [summaryContent, setSummaryContent] = useState<DiscussionSummary>();
+  const [showLimitReached, setShowLimitReached] = useState(false);
+
   const navigate = useNavigate();
 
   const goToHomePage = () => {
@@ -138,6 +148,51 @@ function Discussion() {
       speakText();
     }
   }, [responseText]);
+
+  useEffect(() => {
+    const fetchUserDiscussions = async () => {
+      if (user) {
+        const userRef = firestore.collection("users").doc(user.uid);
+
+        // Get current discussions
+        const snapshot = await userRef.get();
+        const userData = snapshot.data();
+        const currentDiscussions = userData?.discussion ?? [];
+
+        return currentDiscussions;
+      }
+    };
+    
+    const checkDiscussionCount = async () => {
+      if (user) {
+        // Assuming you have a function to get the current user's discussions...
+        const discussions = await fetchUserDiscussions();
+
+        // Get the current month and year
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        // Filter the discussions for the current month
+        const discussionsThisMonth = discussions.filter(
+          (discussion: DiscussionSummary) => {
+            const discussionDate = new Date(discussion.datetime);
+            return (
+              discussionDate.getMonth() === currentMonth &&
+              discussionDate.getFullYear() === currentYear
+            );
+          }
+        );
+
+        // If the user has had 5 or more discussions this month, show a popup message
+        if (discussionsThisMonth.length >= 5) {
+          setShowLimitReached(true);
+        }
+      }
+
+      checkDiscussionCount();
+    };
+  }, []);
 
   const handleStartRecording = async () => {
     // Set isSpeaking to true before playing the audio
@@ -398,6 +453,27 @@ function Discussion() {
           <p className="mx-auto">Sending summary...</p>
           <span className="spinner mx-auto"></span>
         </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={showLimitReached}
+        onHide={() => setShowLimitReached(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Limit Reached</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          You have reached the limit of 5 discussions per month. Please wait
+          until next month to start a new discussion.
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="d-flex justify-content-center">
+            <Button variant="secondary" onClick={goToHomePage}>
+              Home
+            </Button>
+          </div>
+        </Modal.Footer>
       </Modal>
     </Container>
   );
