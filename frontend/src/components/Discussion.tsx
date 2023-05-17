@@ -15,6 +15,7 @@ import {
 import SummaryModal from "./SummaryModal";
 import SendingSummaryModal from "./SendingSummaryModal";
 import LimitModal from "./LimitModal";
+import FinishButton from "./FinishButton";
 
 function Discussion() {
   const {
@@ -24,7 +25,6 @@ function Discussion() {
     chatHistory,
     speakingRate,
     setChatHistory,
-    setDiscussions,
     setSpeakingRate,
   } = useDiscussion();
   const [recording, setRecording] = useState(false);
@@ -251,69 +251,6 @@ function Discussion() {
     }
   };
 
-  const addToFirestore = async (summaryData: DiscussionSummary) => {
-    if (user) {
-      const userRef = firestore.collection("users").doc(user.uid);
-
-      // Get current discussions
-      const snapshot = await userRef.get();
-      const userData = snapshot.data();
-      const currentDiscussions = userData?.discussion ?? [];
-
-      // Update the discussions array
-      await userRef.update({
-        discussion: [...currentDiscussions, summaryData],
-      });
-
-      setDiscussions([...currentDiscussions, summaryData]);
-    }
-  };
-
-  const sendSummary = async () => {
-    setSending(true);
-    try {
-      const summaryResponse = await fetch("/summary", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages: chatHistory,
-          language: languageDictionary[language].language,
-        }),
-      });
-
-      if (!summaryResponse.ok) {
-        throw new Error(
-          `Error: ${summaryResponse.status} ${summaryResponse.statusText}`
-        );
-      }
-      const receivedSummaryData = await summaryResponse.json();
-      // Create a new chat summary
-      const discussionSummary: DiscussionSummary = {
-        topic: topic,
-        level: level,
-        language: languageDictionary[language].language,
-        datetime: new Date().toISOString(),
-        mainPoints: receivedSummaryData.mainPoints,
-        conclusion: receivedSummaryData.conclusion,
-        feedback: receivedSummaryData.feedback,
-        score: receivedSummaryData.score,
-      };
-      setSummaryContent(discussionSummary);
-
-      setShowSummary(true);
-
-      if (user) {
-        await addToFirestore(discussionSummary);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setSending(false);
-    }
-  };
-
   return (
     <Container className="vh-100">
       <Row className="justify-content-center mt-5 ">
@@ -396,15 +333,11 @@ function Discussion() {
       </Row>
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
-          <div className="d-flex justify-content-center">
-            <Button
-              onClick={sendSummary}
-              variant="success"
-              disabled={!isReadyToFinish}
-            >
-              Finish
-            </Button>
-          </div>
+          <FinishButton
+            isReadyToFinish={isReadyToFinish}
+            setShowSummary={setShowSummary}
+            setSummaryContent={setSummaryContent}
+          />
         </Col>
       </Row>
       <SummaryModal

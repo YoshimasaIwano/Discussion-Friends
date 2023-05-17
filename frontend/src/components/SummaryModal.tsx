@@ -3,16 +3,18 @@ import { Modal, Button } from "react-bootstrap";
 import { sum } from "../functions/utils";
 import { DiscussionSummary } from "../types";
 
-const SummaryModal = ({
-  show,
-  onHide,
-  summaryContent,
-  goToHomePage,
-}: {
+interface SummaryModalProps {
   show: boolean;
   onHide: () => void;
   summaryContent: DiscussionSummary | undefined;
   goToHomePage: () => void;
+}
+
+const SummaryModal: React.FC<SummaryModalProps> = ({
+  show,
+  onHide,
+  summaryContent,
+  goToHomePage,
 }) => {
   return (
     <Modal show={show} onHide={onHide} centered size="lg">

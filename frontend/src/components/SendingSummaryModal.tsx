@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 
-const SendingModal = () => {
+const SendingSummaryModal = () => {
   return (
     <Modal show={true} backdrop="static" keyboard={false} centered>
       <Modal.Body className="">
@@ -12,4 +12,4 @@ const SendingModal = () => {
   );
 };
 
-export default SendingModal;
+export default SendingSummaryModal;

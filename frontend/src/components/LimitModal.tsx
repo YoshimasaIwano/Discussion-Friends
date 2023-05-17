@@ -1,7 +1,12 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const LimitModal = ({ onHide, goToHomePage }: {onHide: () => void, goToHomePage: () => void}) => {
+interface LimitModalProps {
+  onHide: () => void;
+  goToHomePage: () => void;
+}
+
+const LimitModal: React.FC<LimitModalProps> = ({ onHide, goToHomePage }) => {
   return (
     <Modal
       show={true}
