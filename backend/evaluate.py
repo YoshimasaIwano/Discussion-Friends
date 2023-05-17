@@ -39,7 +39,7 @@ def evaluate_conversation(messages):
     )
     text = response.choices[-1].message.content
 
-    print(text)
+    # print(text)
     scores = []
     for criterion in range(1, 11):
         score_match = re.search(rf"{criterion}\.\s(\d+)", text)

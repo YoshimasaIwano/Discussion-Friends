@@ -9,7 +9,7 @@ const PolarGraph = ({ scores }: { scores: number[] }) => {
   const options = {
     chart: {
       polar: true,
-      type: "line",
+      type: "area",
     },
 
     title: {
@@ -41,7 +41,7 @@ const PolarGraph = ({ scores }: { scores: number[] }) => {
       gridLineInterpolation: "polygon",
       lineWidth: 0,
       min: 0,
-      max: 100,
+      max: 10,
     },
 
     tooltip: {

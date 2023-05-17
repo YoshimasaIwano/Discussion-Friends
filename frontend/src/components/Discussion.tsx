@@ -13,7 +13,6 @@ import {
   Card,
 } from "react-bootstrap";
 import SummaryModal from "./SummaryModal";
-import SendingSummaryModal from "./SendingSummaryModal";
 import LimitModal from "./LimitModal";
 import FinishButton from "./FinishButton";
 
@@ -37,7 +36,6 @@ function Discussion() {
   const { user } = useAuth();
   const [transcribedText, setTranscribedText] = useState("");
   const [responseText, setResponseText] = useState("");
-  const [sending, setSending] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [summaryContent, setSummaryContent] = useState<DiscussionSummary>();
   const [showLimitReached, setShowLimitReached] = useState(false);
@@ -346,8 +344,6 @@ function Discussion() {
         summaryContent={summaryContent}
         goToHomePage={goToHomePage}
       />
-
-      {sending && <SendingSummaryModal />}
 
       {showLimitReached && (
         <LimitModal

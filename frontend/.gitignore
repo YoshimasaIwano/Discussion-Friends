@@ -30,3 +30,7 @@ yarn-error.log*
 
 # aassets
 **/assets
+
+tsconfig.json
+package-lock.json
+package.json

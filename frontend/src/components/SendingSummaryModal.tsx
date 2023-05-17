@@ -4,9 +4,9 @@ import { Modal } from "react-bootstrap";
 const SendingSummaryModal = () => {
   return (
     <Modal show={true} backdrop="static" keyboard={false} centered>
-      <Modal.Body className="">
-        <p className="mx-auto">Sending summary...</p>
-        <span className="spinner mx-auto"></span>
+      <Modal.Body className="d-flex justify-content-center align-items-center">
+        <p className="mr-2 mb-0">Sending summary...</p>
+        <span className="spinner"></span>
       </Modal.Body>
     </Modal>
   );

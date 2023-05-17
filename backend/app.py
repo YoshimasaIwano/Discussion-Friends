@@ -9,10 +9,10 @@ from evaluate import evaluate_conversation
 from speech_to_text import audio_to_text
 from chat import chat_gpt_debater
 from summarize import summarize_conversation
-from feedback import feedback
+# from feedback import feedback
 
-# app = Flask(__name__, static_folder='./build', static_url_path='/')
-app = Flask(__name__)
+app = Flask(__name__, static_folder='./build', static_url_path='/')
+# app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'images/profile'
 app.config['AUDIO_FOLDER'] = '/tmp/audio'
 app.config['GCS_BUCKET_NAME'] = 'treasure-385205.appspot.com'
@@ -80,7 +80,7 @@ def chat():
 @app.route('/summary', methods=['POST'])
 def summary():
     data = request.get_json()
-    print(data)
+    # print(data)
     try:
         # Use a ThreadPoolExecutor to run the functions concurrently
         with ThreadPoolExecutor() as executor:

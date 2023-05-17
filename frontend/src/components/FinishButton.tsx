@@ -4,6 +4,7 @@ import { DiscussionSummary, languageDictionary } from "../types";
 import { useDiscussion } from "../hooks/DiscussionContext";
 import { firestore } from "../firebase/firebase";
 import { useAuth } from "../firebase/AuthContent";
+import SendingSummaryModal from "./SendingSummaryModal";
 
 interface FinishButtonProps {
   isReadyToFinish: boolean;
@@ -18,13 +19,8 @@ const FinishButton: React.FC<FinishButtonProps> = ({
   setShowSummary,
   setSummaryContent,
 }) => {
-  const {
-    language,
-    topic,
-    level,
-    chatHistory,
-    setDiscussions,
-  } = useDiscussion();
+  const { language, topic, level, chatHistory, setDiscussions } =
+    useDiscussion();
   const { user } = useAuth();
   const [sending, setSending] = useState(false);
   const addToFirestore = async (summaryData: DiscussionSummary) => {
@@ -90,15 +86,21 @@ const FinishButton: React.FC<FinishButtonProps> = ({
     }
   };
   return (
-    <div className="d-flex justify-content-center">
-      <Button
-        onClick={sendSummary}
-        variant="success"
-        disabled={!isReadyToFinish}
-      >
-        Finish
-      </Button>
-    </div>
+    <>
+      {sending ? (
+        <SendingSummaryModal />
+      ) : (
+        <div className="d-flex justify-content-center">
+          <Button
+            onClick={sendSummary}
+            variant="success"
+            disabled={!isReadyToFinish}
+          >
+            Finish
+          </Button>
+        </div>
+      )}
+    </>
   );
 };
 
