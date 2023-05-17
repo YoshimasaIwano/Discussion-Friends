@@ -147,10 +147,15 @@ function Home() {
         </a>
       </div>
       <div className="mt-5">
-        <p className="text-center">
-          We'd love to hear your feedback! Click the Google Form icon to share
-          your thoughts, and help us spread the word by sharing AI Brain Gym on
-          Twitter!
+        <p className="text-center text-uppercase font-weight-bold text-primary fs-5">
+          <span className="text-danger">
+            We&apos;d love to hear your feedback!
+          </span>{" "}
+          <br />
+          Click the <i className="fab fa-google text-success"></i> Form icon to
+          share your thoughts, <br />
+          and help us spread the word by sharing AI Brain Gym on{" "}
+          <span className="text-info">Twitter!</span>
         </p>
       </div>
     </Container>

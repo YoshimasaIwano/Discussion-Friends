@@ -4,14 +4,16 @@ import {
   Row,
   Col,
   Card,
-  ListGroup,
   Button,
   Form,
+  Modal,
 } from "react-bootstrap";
 import { firestore } from "../firebase/firebase";
 import { useAuth } from "../firebase/AuthContent";
 import { useDiscussion } from "../hooks/DiscussionContext";
 import { sum } from "../functions/utils";
+import { DiscussionSummary } from "../types";
+import PolarGraph from "./PolarGraph";
 
 function Profile() {
   const { user } = useAuth();
@@ -19,6 +21,8 @@ function Profile() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { discussions } = useDiscussion();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedDiscussion, setSelectedDiscussion] = useState<DiscussionSummary | null>(null);
 
   const handleFileInputChange = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -69,6 +73,16 @@ function Profile() {
     return date.toLocaleDateString();
   };
 
+  const handleDiscussionClick = (discussion: DiscussionSummary) => {
+    setSelectedDiscussion(discussion);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedDiscussion(null);
+    setShowModal(false);
+  };
+
   return (
     <Container className="py-4">
       <Row className="my-4 py-4">
@@ -102,41 +116,68 @@ function Profile() {
         </Col>
         <Col md={8}>
           <h2>Discussions</h2>
-          <ListGroup className="discussions-list discussions-text">
+          <Row xs={1} md={2} className="g-4">
             {discussions
               .slice()
               .reverse()
               .map((discussion, index) => {
                 return (
-                  <Card key={index} className="mb-3">
-                    <Card.Body>
-                      <Card.Title className="text-capitalize font-weight-bold discussion-title">
-                        {discussion.topic}
-                      </Card.Title>
-                      <Card.Subtitle className="mb-2 text-muted">
-                        {formatDate(discussion.datetime)}
-                      </Card.Subtitle>
-                      <Card.Text>
-                        <strong>Score:</strong> {sum(discussion.score)}
-                      </Card.Text>
-                      <Card.Text>
-                        <strong>Main Points:</strong> {discussion.mainPoints}
-                      </Card.Text>
-                      <Card.Text>
-                        <strong>Conclusion:</strong> {discussion.conclusion}
-                      </Card.Text>
-                      <Card.Text>
-                        <strong>Feedback:</strong> {discussion.feedback}
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
+                  <Col>
+                    <Card
+                      key={index}
+                      className="mb-2 cursor-pointer card-discussion"
+                      onClick={() => handleDiscussionClick(discussion)}
+                    >
+                      <Card.Body className="px-1 text-center">
+                        <Card.Title className="text-capitalize font-weight-bold discussion-title">
+                          {discussion.topic}
+                        </Card.Title>
+                        <Card.Subtitle className="mb-2 text-muted">
+                          {formatDate(discussion.datetime)}
+                        </Card.Subtitle>
+                        <div className="d-flex ">
+                          <Card.Text className="m-auto">
+                            <strong>Level:</strong> {discussion.level}
+                          </Card.Text>
+                          <Card.Text className="m-auto">
+                            <strong>Language:</strong> {discussion.language}
+                          </Card.Text>
+                          <Card.Text className="m-auto">
+                            <strong>Score:</strong> {sum(discussion.score)}
+                          </Card.Text>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
                 );
               })}
-          </ListGroup>
+          </Row>
         </Col>
       </Row>
+      {selectedDiscussion && (
+        <Modal show={showModal} onHide={handleCloseModal} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title className="text-capitalize">
+              {selectedDiscussion.topic}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>
+              <strong>Main Points:</strong> {selectedDiscussion.mainPoints}
+            </p>
+            <p>
+              <strong>Conclusion:</strong> {selectedDiscussion.conclusion}
+            </p>
+            <p>
+              <strong>Feedback:</strong> {selectedDiscussion.feedback}
+            </p>
+            <PolarGraph scores={selectedDiscussion.score} />
+          </Modal.Body>
+        </Modal>
+      )}
     </Container>
   );
+
 }
 
 export default Profile;

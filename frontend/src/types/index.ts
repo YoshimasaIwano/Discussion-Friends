@@ -40,6 +40,8 @@ export type Chat = {
 
 export type DiscussionSummary = {
   topic: string;
+  level: string;
+  language: string;
   datetime: string;
   mainPoints: string;
   conclusion: string;

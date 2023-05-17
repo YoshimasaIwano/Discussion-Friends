@@ -234,7 +234,9 @@ function Discussion() {
       const receivedSummaryData = await summaryResponse.json();
       // Create a new chat summary
       const discussionSummary: DiscussionSummary = {
-        topic,
+        topic: topic,
+        level: level,
+        language: languageDictionary[language].language,
         datetime: new Date().toISOString(),
         mainPoints: receivedSummaryData.mainPoints,
         conclusion: receivedSummaryData.conclusion,
@@ -392,8 +394,8 @@ function Discussion() {
       </Modal>
 
       <Modal show={sending} backdrop="static" keyboard={false} centered>
-        <Modal.Body className="text-center justify-content-center align-items-center d-flex">
-          <p>Sending summary...</p>
+        <Modal.Body className="">
+          <p className="mx-auto">Sending summary...</p>
           <span className="spinner mx-auto"></span>
         </Modal.Body>
       </Modal>
