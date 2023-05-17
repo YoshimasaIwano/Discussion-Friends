@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useDiscussion } from "../hooks/DiscussionContext";
 import { useEffect } from "react";
 import { CSSTransition } from "react-transition-group";
+import GoogleFormLogo from "../assets/Google_Forms_Logo_128px.png";
+import TwitterLogo from "../assets/Twitter_social_icons.png";
 
 function Home() {
   const {
@@ -118,18 +120,39 @@ function Home() {
               Start Discussion
             </Button>
           </Col>
-          <Col xs={12}>
-            <Button
-              className="mt-auto"
-              style={{ backgroundColor: 'blue', borderColor: 'blue' }}
-              // variant="primary"
-              onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSe5xtkBSU-1_3oX4wySaD0i25dX2rGiGv-2lPt-HDPd-dGLYg/viewform', '_blank')}
-            >
-              Give Feedback to get early access
-            </Button>
-          </Col>
         </Row>
       </Form>
+      <div className="mt-5 d-flex justify-content-center">
+        <a
+          href="https://docs.google.com/forms/d/e/1FAIpQLSe5xtkBSU-1_3oX4wySaD0i25dX2rGiGv-2lPt-HDPd-dGLYg/viewform"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src={GoogleFormLogo}
+            alt="Google Form"
+            style={{ width: "32px", height: "32px", marginRight: "20px" }}
+          />
+        </a>
+        <a
+          href="https://twitter.com/intent/tweet?text=Boost%20your%20brainpower%20with%20AI%20Brain%20Gym!%20This%20innovative%20app%20lets%20you%20choose%20topics%20and%20levels%20to%20customize%20your%20learning%20journey.%20Check%20it%20out!%20https://treasure-385205.uc.r.appspot.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src={TwitterLogo}
+            alt="Share on Twitter"
+            style={{ width: "32px", height: "32px" }}
+          />
+        </a>
+      </div>
+      <div className="mt-5">
+        <p className="text-center">
+          We'd love to hear your feedback! Click the Google Form icon to share
+          your thoughts, and help us spread the word by sharing AI Brain Gym on
+          Twitter!
+        </p>
+      </div>
     </Container>
   );
 }
