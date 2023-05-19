@@ -1,19 +1,11 @@
 import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Form,
-  Modal,
-} from "react-bootstrap";
-import { firestore } from "../firebase/firebase";
-import { useAuth } from "../firebase/AuthContent";
-import { useDiscussion } from "../hooks/DiscussionContext";
-import { sum } from "../functions/utils";
-import { DiscussionSummary } from "../types";
+import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
+import { firestore } from "../../firebase/firebase";
+import { useAuth } from "../../firebase/AuthContent";
+import { useDiscussion } from "../../hooks/DiscussionContext";
+import { DiscussionSummary } from "../../types";
 import PolarGraph from "./PolarGraph";
+import DiscussionList from "./DiscussionList";
 
 function Profile() {
   const { user } = useAuth();
@@ -22,7 +14,8 @@ function Profile() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { discussions } = useDiscussion();
   const [showModal, setShowModal] = useState(false);
-  const [selectedDiscussion, setSelectedDiscussion] = useState<DiscussionSummary | null>(null);
+  const [selectedDiscussion, setSelectedDiscussion] =
+    useState<DiscussionSummary | null>(null);
 
   const handleFileInputChange = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -68,11 +61,6 @@ function Profile() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
-
   const handleDiscussionClick = (discussion: DiscussionSummary) => {
     setSelectedDiscussion(discussion);
     setShowModal(true);
@@ -84,9 +72,9 @@ function Profile() {
   };
 
   return (
-    <Container className="py-4">
-      <Row className="my-4 py-4">
-        <Col md={4} className="text-center">
+    <Container className="py-4 px-0">
+      <Row className="my-4 py-4 mx-0 w-100">
+        <Col md={3} className="text-center">
           {user?.photoURL ? (
             <img
               src={user.photoURL}
@@ -114,44 +102,12 @@ function Profile() {
           </Button>
           {errorMessage && <p className="text-danger">{errorMessage}</p>}
         </Col>
-        <Col md={8}>
+        <Col md={9}>
           <h2>Discussions</h2>
-          <Row xs={1} md={2} className="g-4">
-            {discussions
-              .slice()
-              .reverse()
-              .map((discussion, index) => {
-                return (
-                  <Col>
-                    <Card
-                      key={index}
-                      className="mb-2 cursor-pointer card-discussion card-background"
-                      onClick={() => handleDiscussionClick(discussion)}
-                    >
-                      <Card.Body className="px-1 text-center">
-                        <Card.Title className="text-capitalize font-weight-bold discussion-title">
-                          {discussion.topic}
-                        </Card.Title>
-                        <Card.Subtitle className="mb-2 ">
-                          {formatDate(discussion.datetime)}
-                        </Card.Subtitle>
-                        <div className="d-flex ">
-                          <Card.Text className="m-auto">
-                            <strong>Level:</strong> {discussion.level}
-                          </Card.Text>
-                          <Card.Text className="m-auto">
-                            <strong>Language:</strong> {discussion.language}
-                          </Card.Text>
-                          <Card.Text className="m-auto">
-                            <strong>Score:</strong> {sum(discussion.score)}
-                          </Card.Text>
-                        </div>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                );
-              })}
-          </Row>
+          <DiscussionList
+            discussions={discussions}
+            handleDiscussionClick={handleDiscussionClick}
+          />
         </Col>
       </Row>
       {selectedDiscussion && (
@@ -177,7 +133,6 @@ function Profile() {
       )}
     </Container>
   );
-
 }
 
 export default Profile;

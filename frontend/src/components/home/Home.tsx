@@ -1,11 +1,11 @@
 // Home.tsx
 import { Button, Container, Form, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useDiscussion } from "../hooks/DiscussionContext";
+import { useDiscussion } from "../../hooks/DiscussionContext";
 import { useEffect } from "react";
 import { CSSTransition } from "react-transition-group";
-import GoogleFormLogo from "../assets/Google_Forms_Logo_128px.png";
-import TwitterLogo from "../assets/Twitter_social_icons.png";
+import GoogleFormLogo from "../../assets/Google_Forms_Logo_128px.png";
+import TwitterLogo from "../../assets/Twitter_social_icons.png";
 
 function Home() {
   const {

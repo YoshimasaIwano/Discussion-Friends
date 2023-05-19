@@ -164,9 +164,9 @@ body {
 
 .spinner {
   display: inline-block;
-  width: 2rem; /* Add width */
-  height: 2rem; /* Add height */
-  border: 0.2rem solid rgba(0, 0, 0, 0.3);
+  width: 1.5rem; /* Add width */
+  height: 1.5rem; /* Add height */
+  border: 0.1rem solid rgba(0, 0, 0, 0.3);
   border-radius: 50%;
   border-top-color: #000;
   animation: spinning 1s linear infinite;
