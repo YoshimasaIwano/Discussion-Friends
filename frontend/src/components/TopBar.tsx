@@ -37,7 +37,7 @@ function TopBar() {
           className="fw-bold"
           onClick={handleCollapse}
         >
-          AI Brain<span className="heading-gym fw-bold">Gym</span>
+          Rally
         </Navbar.Brand>
         <Navbar.Toggle
           aria-controls="basic-navbar-nav"

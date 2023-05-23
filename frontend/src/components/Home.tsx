@@ -38,10 +38,10 @@ function Home() {
       <CSSTransition in={true} timeout={1000} classNames="fade" appear>
         <div>
           <h1 className="display-4">
-            AI Brain <span className="heading-gym fw-bold">Gym</span>
+            Rally
           </h1>
           <p className="lead mb-4">
-            Why don't you train your brain at our "gym"?
+            The digital dojo where you master debate and sharpen your intellect!
           </p>
         </div>
       </CSSTransition>
@@ -147,19 +147,27 @@ function Home() {
         </a>
       </div>
       <div className="mt-5">
-        <p className="text-center text-uppercase font-weight-bold text-primary fs-5">
+        <p className="text-center font-weight-bold text-primary fs-5">
           <span className="text-danger">
             We&apos;d love to hear your feedback!
           </span>{" "}
           <br />
           Click the <i className="fab fa-google text-success"></i> Form icon to
           share your thoughts, <br />
-          and help us spread the word by sharing AI Brain Gym on{" "}
-          <span className="text-info">Twitter!</span>
+          and help us spread the word by sharing Rally on{" "}
+          <a 
+          href="https://twitter.com/intent/tweet?text=@Rally_xyz%20%0ABoost%20your%20logical%20thinking%20with%20Rally!%20This%20innovative%20app%20lets%20you%20choose%20topics%20and%20levels%20to%20customize%20your%20learning%20journey.%20Check%20it%20out!%20https://treasure-385205.uc.r.appspot.com/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-info"
+        >
+          Twitter!
+          </a>
         </p>
       </div>
     </Container>
   );
 }
+
 
 export default Home;
