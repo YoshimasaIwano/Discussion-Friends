@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
-import { DiscussionSummary, languageDictionary } from "../types";
-import { useDiscussion } from "../hooks/DiscussionContext";
-import { firestore } from "../firebase/firebase";
-import { useAuth } from "../firebase/AuthContent";
+import { DiscussionSummary, languageDictionary } from "../../types";
+import { useDiscussion } from "../../hooks/DiscussionContext";
+import { firestore } from "../../firebase/firebase";
+import { useAuth } from "../../firebase/AuthContent";
 import SendingSummaryModal from "./SendingSummaryModal";
 
 interface FinishButtonProps {

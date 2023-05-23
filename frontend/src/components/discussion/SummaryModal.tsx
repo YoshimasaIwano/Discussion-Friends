@@ -1,23 +1,29 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
-import { sum } from "../functions/utils";
-import { DiscussionSummary } from "../types";
+import { sum } from "../../functions/utils";
+import { DiscussionSummary } from "../../types";
+import { useNavigate } from "react-router-dom";
 
 interface SummaryModalProps {
   show: boolean;
-  onHide: () => void;
   summaryContent: DiscussionSummary | undefined;
-  goToHomePage: () => void;
+  setShowSummary: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SummaryModal: React.FC<SummaryModalProps> = ({
   show,
-  onHide,
   summaryContent,
-  goToHomePage,
+  setShowSummary,
 }) => {
+  const navigate = useNavigate();
+
+  const goToHomePage = () => {
+    setShowSummary(false);
+    navigate("/");
+  };
+
   return (
-    <Modal show={show} onHide={onHide} centered size="lg">
+    <Modal show={show} onHide={() => setShowSummary(false)} centered size="lg">
       <Modal.Header closeButton>
         <Modal.Title>Summary</Modal.Title>
       </Modal.Header>

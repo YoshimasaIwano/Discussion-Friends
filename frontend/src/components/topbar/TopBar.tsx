@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useAuth } from "../firebase/AuthContent";
-import { firebase } from "../firebase/firebase";
+import { useAuth } from "../../firebase/AuthContent";
+import { firebase } from "../../firebase/firebase";
 import { Navbar, Nav } from "react-bootstrap";
-import { useDiscussion } from "../hooks/DiscussionContext";
+import { useDiscussion } from "../../hooks/DiscussionContext";
 
 function TopBar() {
   const { user } = useAuth();

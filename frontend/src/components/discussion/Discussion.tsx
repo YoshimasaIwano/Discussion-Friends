@@ -1,17 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDiscussion } from "../hooks/DiscussionContext";
-import { firestore } from "../firebase/firebase";
-import { useAuth } from "../firebase/AuthContent";
-import { languageDictionary, DiscussionSummary } from "../types";
-import {
-  Button,
-  Container,
-  Row,
-  Col,
-  Form,
-  Card,
-} from "react-bootstrap";
+import { useDiscussion } from "../../hooks/DiscussionContext";
+import { firestore } from "../../firebase/firebase";
+import { useAuth } from "../../firebase/AuthContent";
+import { languageDictionary, DiscussionSummary } from "../../types";
+import { Button, Container, Row, Col, Form, Card } from "react-bootstrap";
 import SummaryModal from "./SummaryModal";
 import LimitModal from "./LimitModal";
 import FinishButton from "./FinishButton";
@@ -39,13 +32,6 @@ function Discussion() {
   const [showSummary, setShowSummary] = useState(false);
   const [summaryContent, setSummaryContent] = useState<DiscussionSummary>();
   const [showLimitReached, setShowLimitReached] = useState(false);
-
-  const navigate = useNavigate();
-
-  const goToHomePage = () => {
-    setShowSummary(false);
-    navigate("/");
-  };
 
   useEffect(() => {
     setChatHistory([
@@ -188,7 +174,6 @@ function Discussion() {
           setShowLimitReached(true);
         }
       }
-      
     };
 
     checkDiscussionCount();
@@ -227,8 +212,9 @@ function Discussion() {
 
   const sendAudioData = async (audioBlob: Blob) => {
     try {
+      const userId = user?.uid;
       const formData = new FormData();
-      formData.append("audio", audioBlob, "audio.mp3");
+      formData.append("audio", audioBlob, `audio_${userId}.mp3`);
       formData.append("language", language);
 
       const response = await fetch("/whisper", {
@@ -340,16 +326,12 @@ function Discussion() {
       </Row>
       <SummaryModal
         show={showSummary}
-        onHide={() => setShowSummary(false)}
         summaryContent={summaryContent}
-        goToHomePage={goToHomePage}
+        setShowSummary={setShowSummary}
       />
 
       {showLimitReached && (
-        <LimitModal
-          onHide={() => setShowLimitReached(false)}
-          goToHomePage={goToHomePage}
-        />
+        <LimitModal setShowLimitReached={setShowLimitReached} />
       )}
     </Container>
   );
