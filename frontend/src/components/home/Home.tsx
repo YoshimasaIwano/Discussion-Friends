@@ -135,7 +135,7 @@ function Home() {
           />
         </a>
         <a
-          href="https://twitter.com/intent/tweet?text=Boost%20your%20brainpower%20with%20AI%20Brain%20Gym!%20This%20innovative%20app%20lets%20you%20choose%20topics%20and%20levels%20to%20customize%20your%20learning%20journey.%20Check%20it%20out!%20https://treasure-385205.uc.r.appspot.com/"
+          href="https://twitter.com/intent/tweet?text=@Rally_xyz%20%0ABoost%20your%20logical%20thinking%20with%20Rally!%20This%20innovative%20app%20lets%20you%20choose%20topics%20and%20levels%20to%20customize%20your%20learning%20journey.%20Check%20it%20out!%20https://treasure-385205.uc.r.appspot.com/"
           target="_blank"
           rel="noopener noreferrer"
         >
