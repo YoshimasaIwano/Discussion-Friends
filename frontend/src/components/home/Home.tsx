@@ -152,9 +152,18 @@ function Home() {
             We&apos;d love to hear your feedback!
           </span>{" "}
           <br />
-          Click the <i className="fab fa-google text-success"></i> Form icon to
-          share your thoughts, <br />
-          and help us spread the word by sharing Rally on{" "}
+          Join our  <i className="fab fa-google text-success"></i> 
+          Waitlist and Discord  by filling out this{" "}
+          <a 
+          href="https://docs.google.com/forms/d/e/1FAIpQLSe5xtkBSU-1_3oX4wySaD0i25dX2rGiGv-2lPt-HDPd-dGLYg/viewform" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-info"
+        >
+          Form!
+          </a>
+           <br />
+          and Help us spread the word by sharing Rally on{" "}
           <a 
           href="https://twitter.com/intent/tweet?text=@Rally_xyz%20%0ABoost%20your%20logical%20thinking%20with%20Rally!%20This%20innovative%20app%20lets%20you%20choose%20topics%20and%20levels%20to%20customize%20your%20learning%20journey.%20Check%20it%20out!%20https://treasure-385205.uc.r.appspot.com/" 
           target="_blank" 
