@@ -1,19 +1,18 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { firebase, firestore } from "./firebase";
-import { useAuth } from "./AuthContent";
-import { Container, Row, Col, Modal, Button } from "react-bootstrap";
-import * as firebaseui from "firebaseui";
-import "firebaseui/dist/firebaseui.css";
-import App from "../App";
-import { useDiscussion } from "../hooks/DiscussionContext";
-
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { firebase, firestore } from './firebase';
+import { useAuth } from './AuthContent';
+import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
+import * as firebaseui from 'firebaseui';
+import 'firebaseui/dist/firebaseui.css';
+import App from '../App';
+import { useDiscussion } from '../hooks/DiscussionContext';
 
 function SignIn() {
   const { darkMode } = useDiscussion();
   const { user } = useAuth();
 
   const saveUserData = async (user: firebase.User) => {
-    const userRef = firestore.collection("users").doc(user.uid);
+    const userRef = firestore.collection('users').doc(user.uid);
 
     const userData = await userRef.get();
     if (!userData.exists) {
@@ -25,7 +24,7 @@ function SignIn() {
           photoURL: user.photoURL || null,
         });
       } catch (error) {
-        console.error("Error adding user data to Firestore:", error);
+        console.error('Error adding user data to Firestore:', error);
       }
     }
   };
@@ -39,12 +38,12 @@ function SignIn() {
         saveUserData(user);
       }
     } catch (error) {
-      console.error("Error signing in with Google:", error);
+      console.error('Error signing in with Google:', error);
     }
   };
 
   return (
-    <div className={darkMode ? "dark-mode " : ""}>
+    <div className={darkMode ? 'dark-mode ' : ''}>
       <Container className="min-vh-100 bg-light text-dark" fluid="lg">
         {!user ? (
           <Row className="vh-100 align-items-center">

@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { useAuth } from "../../firebase/AuthContent";
-import { firebase } from "../../firebase/firebase";
-import { Navbar, Nav } from "react-bootstrap";
-import { useDiscussion } from "../../hooks/DiscussionContext";
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../firebase/AuthContent';
+import { firebase } from '../../firebase/firebase';
+import { Navbar, Nav } from 'react-bootstrap';
+import { useDiscussion } from '../../hooks/DiscussionContext';
 
 function TopBar() {
   const { user } = useAuth();
@@ -18,7 +18,7 @@ function TopBar() {
     try {
       await firebase.auth().signOut();
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error('Error signing out:', error);
     }
   };
 
@@ -28,7 +28,7 @@ function TopBar() {
         expand="sm"
         expanded={expanded}
         bg="transparent"
-        variant={darkMode ? "dark" : "light"}
+        variant={darkMode ? 'dark' : 'light'}
         className="px-2"
       >
         <Navbar.Brand
@@ -68,7 +68,7 @@ function TopBar() {
       <div className="px-5 mt-3">
         <button
           className={`dark-mode-btn ${
-            darkMode ? "dark-mode-btn-white" : "dark-mode-btn-black"
+            darkMode ? 'dark-mode-btn-white' : 'dark-mode-btn-black'
           }`}
           onClick={toggleDarkMode}
         >

@@ -1,6 +1,6 @@
-import React from "react";
-import { Modal, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { Modal, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 interface LimitModalProps {
   setShowLimitReached: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,7 +11,7 @@ const LimitModal: React.FC<LimitModalProps> = ({ setShowLimitReached }) => {
 
   const goToHomePage = () => {
     setShowLimitReached(false);
-    navigate("/");
+    navigate('/');
   };
   return (
     <Modal

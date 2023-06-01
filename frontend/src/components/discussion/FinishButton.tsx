@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import Button from "react-bootstrap/Button";
-import { DiscussionSummary, languageDictionary } from "../../types";
-import { useDiscussion } from "../../hooks/DiscussionContext";
-import { firestore } from "../../firebase/firebase";
-import { useAuth } from "../../firebase/AuthContent";
-import SendingSummaryModal from "./SendingSummaryModal";
+import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import { DiscussionSummary, languageDictionary } from '../../types';
+import { useDiscussion } from '../../hooks/DiscussionContext';
+import { firestore } from '../../firebase/firebase';
+import { useAuth } from '../../firebase/AuthContent';
+import SendingSummaryModal from './SendingSummaryModal';
 
 interface FinishButtonProps {
   isReadyToFinish: boolean;
@@ -25,7 +25,7 @@ const FinishButton: React.FC<FinishButtonProps> = ({
   const [sending, setSending] = useState(false);
   const addToFirestore = async (summaryData: DiscussionSummary) => {
     if (user) {
-      const userRef = firestore.collection("users").doc(user.uid);
+      const userRef = firestore.collection('users').doc(user.uid);
 
       // Get current discussions
       const snapshot = await userRef.get();
@@ -44,10 +44,10 @@ const FinishButton: React.FC<FinishButtonProps> = ({
   const sendSummary = async () => {
     setSending(true);
     try {
-      const summaryResponse = await fetch("/summary", {
-        method: "POST",
+      const summaryResponse = await fetch('/summary', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           messages: chatHistory,
@@ -57,7 +57,7 @@ const FinishButton: React.FC<FinishButtonProps> = ({
 
       if (!summaryResponse.ok) {
         throw new Error(
-          `Error: ${summaryResponse.status} ${summaryResponse.statusText}`
+          `Error: ${summaryResponse.status} ${summaryResponse.statusText}`,
         );
       }
       const receivedSummaryData = await summaryResponse.json();
@@ -80,7 +80,7 @@ const FinishButton: React.FC<FinishButtonProps> = ({
         await addToFirestore(discussionSummary);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     } finally {
       setSending(false);
     }

@@ -1,8 +1,8 @@
-import React from "react";
-import { Modal, Button } from "react-bootstrap";
-import { sum } from "../../functions/utils";
-import { DiscussionSummary } from "../../types";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { Modal, Button } from 'react-bootstrap';
+import { sum } from '../../functions/utils';
+import { DiscussionSummary } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 interface SummaryModalProps {
   show: boolean;
@@ -19,7 +19,7 @@ const SummaryModal: React.FC<SummaryModalProps> = ({
 
   const goToHomePage = () => {
     setShowSummary(false);
-    navigate("/");
+    navigate('/');
   };
 
   return (

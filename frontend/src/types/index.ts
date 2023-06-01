@@ -5,26 +5,26 @@ type languageInfo = {
 };
 
 const English: languageInfo = {
-  language: "English",
-  languageCode: "en-US",
-  name: "en-US-Wavenet-A",
+  language: 'English',
+  languageCode: 'en-US',
+  name: 'en-US-Wavenet-A',
 };
 const Japanese: languageInfo = {
-  language: "Japanese",
-  languageCode: "ja-JP",
-  name: "ja-JP-Wavenet-A",
+  language: 'Japanese',
+  languageCode: 'ja-JP',
+  name: 'ja-JP-Wavenet-A',
 };
 
 const Spanish: languageInfo = {
-  language: "Spanish",
-  languageCode: "es-ES",
-  name: "es-ES-Wavenet-B",
+  language: 'Spanish',
+  languageCode: 'es-ES',
+  name: 'es-ES-Wavenet-B',
 };
 
 const Chinese: languageInfo = {
-  language: "Chinese",
-  languageCode: "cmn-CN",
-  name: "cmn-CN-Wavenet-A",
+  language: 'Chinese',
+  languageCode: 'cmn-CN',
+  name: 'cmn-CN-Wavenet-A',
 };
 export const languageDictionary: Record<string, languageInfo> = {
   en: English,

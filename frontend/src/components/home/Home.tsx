@@ -1,11 +1,11 @@
 // Home.tsx
-import { Button, Container, Form, Col, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { useDiscussion } from "../../hooks/DiscussionContext";
-import { useEffect } from "react";
-import { CSSTransition } from "react-transition-group";
-import GoogleFormLogo from "../../assets/Google_Forms_Logo_128px.png";
-import TwitterLogo from "../../assets/Twitter_social_icons.png";
+import { Button, Container, Form, Col, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { useDiscussion } from '../../hooks/DiscussionContext';
+import { useEffect } from 'react';
+import { CSSTransition } from 'react-transition-group';
+import GoogleFormLogo from '../../assets/Google_Forms_Logo_128px.png';
+import TwitterLogo from '../../assets/Twitter_social_icons.png';
 
 function Home() {
   const {
@@ -21,14 +21,14 @@ function Home() {
   const navigate = useNavigate();
 
   const handleStartDiscussion = () => {
-    navigate("/Discussion");
+    navigate('/Discussion');
   };
 
   useEffect(() => {
     if (language && topic && level && speakingRate) {
-      setLanguage("en");
-      setTopic("");
-      setLevel("");
+      setLanguage('en');
+      setTopic('');
+      setLevel('');
       setSpeakingRate(1.0);
     }
   }, []);
@@ -37,9 +37,7 @@ function Home() {
     <Container className="text-center my-5 vh-100">
       <CSSTransition in={true} timeout={1000} classNames="fade" appear>
         <div>
-          <h1 className="display-4">
-            Rally
-          </h1>
+          <h1 className="display-4">Rally</h1>
           <p className="lead mb-4">
             The digital dojo where you master debate and sharpen your intellect!
           </p>
@@ -67,7 +65,7 @@ function Home() {
             <Form.Control
               as="select"
               value={topic}
-              className={`text-center text-small ${topic ? "" : "text-danger"}`}
+              className={`text-center text-small ${topic ? '' : 'text-danger'}`}
               onChange={(e) => setTopic(e.target.value)}
             >
               <option value="">Select a topic</option>
@@ -87,7 +85,7 @@ function Home() {
             <Form.Control
               as="select"
               value={level}
-              className={`text-center text-small ${level ? "" : "text-danger"}`}
+              className={`text-center text-small ${level ? '' : 'text-danger'}`}
               onChange={(e) => setLevel(e.target.value)}
             >
               <option value="" className="text-red">
@@ -131,7 +129,7 @@ function Home() {
           <img
             src={GoogleFormLogo}
             alt="Google Form"
-            style={{ width: "48px", height: "48px", marginRight: "20px" }}
+            style={{ width: '48px', height: '48px', marginRight: '20px' }}
           />
         </a>
         <a
@@ -142,7 +140,7 @@ function Home() {
           <img
             src={TwitterLogo}
             alt="Share on Twitter"
-            style={{ width: "48px", height: "48px" }}
+            style={{ width: '48px', height: '48px' }}
           />
         </a>
       </div>
@@ -150,33 +148,32 @@ function Home() {
         <p className="text-center font-weight-bold text-primary fs-5">
           <span className="text-danger">
             We&apos;d love to hear your feedback!
-          </span>{" "}
+          </span>{' '}
           <br />
-          Join our  <i className="fab fa-google text-success"></i> 
-          Waitlist and Discord  by filling out this{" "}
-          <a 
-          href="https://docs.google.com/forms/d/e/1FAIpQLSe5xtkBSU-1_3oX4wySaD0i25dX2rGiGv-2lPt-HDPd-dGLYg/viewform" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-info"
-        >
-          Form!
+          Join our <i className="fab fa-google text-success"></i>
+          Waitlist and Discord by filling out this{' '}
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSe5xtkBSU-1_3oX4wySaD0i25dX2rGiGv-2lPt-HDPd-dGLYg/viewform"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-info"
+          >
+            Form!
           </a>
-           <br />
-          and Help us spread the word by sharing Rally on{" "}
-          <a 
-          href="https://twitter.com/intent/tweet?text=@Rally_xyz%20%0ABoost%20your%20logical%20thinking%20with%20Rally!%20This%20innovative%20app%20lets%20you%20choose%20topics%20and%20levels%20to%20customize%20your%20learning%20journey.%20Check%20it%20out!%20https://treasure-385205.uc.r.appspot.com/" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-info"
-        >
-          Twitter!
+          <br />
+          and Help us spread the word by sharing Rally on{' '}
+          <a
+            href="https://twitter.com/intent/tweet?text=@Rally_xyz%20%0ABoost%20your%20logical%20thinking%20with%20Rally!%20This%20innovative%20app%20lets%20you%20choose%20topics%20and%20levels%20to%20customize%20your%20learning%20journey.%20Check%20it%20out!%20https://treasure-385205.uc.r.appspot.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-info"
+          >
+            Twitter!
           </a>
         </p>
       </div>
     </Container>
   );
 }
-
 
 export default Home;

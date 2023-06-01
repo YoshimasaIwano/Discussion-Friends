@@ -8,16 +8,15 @@ module.exports = {
   },
   extends: [
     'plugin:react/recommended',
-    'airbnb',
-    'airbnb/hooks',
+    'airbnb-typescript',
     'plugin:import/recommended',
     'plugin:import/typescript',
     'plugin:@typescript-eslint/recommended',
-    'plugin:@next/next/recommended',
-    'plugin:storybook/recommended',
     'prettier',
   ],
   rules: {
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
     'react/react-in-jsx-scope': 'off',
     'import/extensions': [
       'error',
@@ -48,28 +47,34 @@ module.exports = {
       },
     ],
     'react/jsx-props-no-spreading': 'off',
-    'import/no-extraneous-dependencies': ['error', {
-      // devDependenciesのimportを許容
-      devDependencies: true
-    }],
-    'storybook/prefer-pascal-case': 'off'
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        // devDependenciesのimportを許容
+        devDependencies: true,
+      },
+    ],
+    'storybook/prefer-pascal-case': 'off',
   },
   overrides: [
     {
-      'files': ['*.tsx'],
-      'rules': {
+      files: ['*.tsx'],
+      rules: {
         'react/prop-types': 'off',
       },
     },
   ],
-  "settings": {
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
-    "import/resolver": {
-      "typescript": {
-        "alwaysTryTypes": true,
-      }
-    }
-  }
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+      },
+    },
+  },
+  parserOptions: {
+    project: './tsconfig.json', 
+  },
 };

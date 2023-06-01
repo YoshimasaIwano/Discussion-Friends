@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
-import { firestore } from "../../firebase/firebase";
-import { useAuth } from "../../firebase/AuthContent";
-import { useDiscussion } from "../../hooks/DiscussionContext";
-import { DiscussionSummary } from "../../types";
-import PolarGraph from "./PolarGraph";
-import DiscussionList from "./DiscussionList";
+import React, { useState } from 'react';
+import { Container, Row, Col, Button, Form, Modal } from 'react-bootstrap';
+import { firestore } from '../../firebase/firebase';
+import { useAuth } from '../../firebase/AuthContent';
+import { useDiscussion } from '../../hooks/DiscussionContext';
+import { DiscussionSummary } from '../../types';
+import PolarGraph from './PolarGraph';
+import DiscussionList from './DiscussionList';
 
 function Profile() {
   const { user } = useAuth();
@@ -18,7 +18,7 @@ function Profile() {
     useState<DiscussionSummary | null>(null);
 
   const handleFileInputChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
@@ -32,15 +32,15 @@ function Profile() {
       setErrorMessage(null);
       try {
         const formData = new FormData();
-        formData.append("image", selectedFile);
+        formData.append('image', selectedFile);
 
-        const response = await fetch("/upload", {
-          method: "POST",
+        const response = await fetch('/upload', {
+          method: 'POST',
           body: formData,
         });
 
         if (!response.ok) {
-          throw new Error("Error uploading the image");
+          throw new Error('Error uploading the image');
         }
 
         const result = await response.json();
@@ -48,13 +48,13 @@ function Profile() {
 
         await user.updateProfile({ photoURL });
 
-        const userRef = firestore.collection("users").doc(user.uid);
+        const userRef = firestore.collection('users').doc(user.uid);
         await userRef.update({ photoURL });
 
         setSelectedFile(null);
       } catch (error) {
-        console.error("Error uploading the image:", error);
-        setErrorMessage("Error uploading the image. Please try again.");
+        console.error('Error uploading the image:', error);
+        setErrorMessage('Error uploading the image. Please try again.');
       } finally {
         setIsLoading(false);
       }
@@ -98,7 +98,7 @@ function Profile() {
             as="label"
             htmlFor="formFile"
           >
-            {isLoading ? "Uploading..." : "Select Image"}
+            {isLoading ? 'Uploading...' : 'Select Image'}
           </Button>
           {errorMessage && <p className="text-danger">{errorMessage}</p>}
         </Col>

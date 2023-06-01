@@ -1,7 +1,7 @@
-import React from "react";
-import { Row, Col, Card } from "react-bootstrap";
-import { DiscussionSummary } from "../../types";
-import { sum } from "../../functions/utils";
+import React from 'react';
+import { Row, Col, Card } from 'react-bootstrap';
+import { DiscussionSummary } from '../../types';
+import { sum } from '../../functions/utils';
 
 interface DiscussionListProps {
   discussions: DiscussionSummary[];

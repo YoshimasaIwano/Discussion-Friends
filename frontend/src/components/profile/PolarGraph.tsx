@@ -1,44 +1,44 @@
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-import "highcharts/modules/series-label";
-import "highcharts/modules/exporting";
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import 'highcharts/modules/series-label';
+import 'highcharts/modules/exporting';
 
-require("highcharts/highcharts-more")(Highcharts);
+require('highcharts/highcharts-more')(Highcharts);
 
 const PolarGraph = ({ scores }: { scores: number[] }) => {
   const options = {
     chart: {
       polar: true,
-      type: "area",
+      type: 'area',
     },
 
     title: {
-      text: "Discussion Score Details",
+      text: 'Discussion Score Details',
     },
 
     pane: {
-      size: "90%",
+      size: '90%',
     },
 
     xAxis: {
       categories: [
-        "Clarity",
-        "Relevance",
-        "Depth",
-        "Open-mindedness",
-        "Respectful tone",
-        "Active listening",
-        "Constructive criticism",
-        "Balance",
-        "Engagement",
-        "Progress",
+        'Clarity',
+        'Relevance',
+        'Depth',
+        'Open-mindedness',
+        'Respectful tone',
+        'Active listening',
+        'Constructive criticism',
+        'Balance',
+        'Engagement',
+        'Progress',
       ],
-      tickmarkPlacement: "on",
+      tickmarkPlacement: 'on',
       lineWidth: 0,
     },
 
     yAxis: {
-      gridLineInterpolation: "polygon",
+      gridLineInterpolation: 'polygon',
       lineWidth: 0,
       min: 0,
       max: 10,
@@ -52,9 +52,9 @@ const PolarGraph = ({ scores }: { scores: number[] }) => {
 
     series: [
       {
-        name: "Score",
+        name: 'Score',
         data: scores,
-        pointPlacement: "on",
+        pointPlacement: 'on',
       },
     ],
   };

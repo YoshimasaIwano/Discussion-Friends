@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { firebase, firestore } from "./firebase";
-import { Button, Form, Modal } from "react-bootstrap";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { firebase, firestore } from './firebase';
+import { Button, Form, Modal } from 'react-bootstrap';
 
 interface AuthContextType {
   user: firebase.User | null;
@@ -24,9 +24,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<firebase.User | null>(null);
   const [initializing, setInitializing] = useState<boolean>(true);
   const [showModal, setShowModal] = useState(false);
-  const [userGeneration, setUserGeneration] = useState("");
-  const [userGender, setUserGender] = useState("");
-  const [userOccupation, setUserOccupation] = useState("");
+  const [userGeneration, setUserGeneration] = useState('');
+  const [userGender, setUserGender] = useState('');
+  const [userOccupation, setUserOccupation] = useState('');
 
   const isUserDataComplete =
     userGeneration && userGender && userOccupation ? true : false;
@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (user) {
         // Fetch user data from Firestore
         firestore
-          .collection("users")
+          .collection('users')
           .doc(user.uid)
           .get()
           .then((doc) => {
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
           })
           .catch((error) => {
-            console.log("Error getting document:", error);
+            console.log('Error getting document:', error);
           });
       }
     });
@@ -74,22 +74,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const user = firebase.auth().currentUser;
     if (user) {
       firestore
-        .collection("users")
+        .collection('users')
         .doc(user.uid)
-        .update(
-          {
-            generation: userGeneration,
-            gender: userGender,
-            occupation: userOccupation,
-            hasCompletedProfile: true, // set the flag indicating the user has completed their profile
-          },
-        ) 
+        .update({
+          generation: userGeneration,
+          gender: userGender,
+          occupation: userOccupation,
+          hasCompletedProfile: true, // set the flag indicating the user has completed their profile
+        })
         .then(() => {
           setShowModal(false);
         });
     }
   };
-  
+
   return (
     <AuthContext.Provider value={{ user, initializing }}>
       <Modal

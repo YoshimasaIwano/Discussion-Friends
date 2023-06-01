@@ -1,15 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDiscussion } from "../../hooks/DiscussionContext";
-import { firestore } from "../../firebase/firebase";
-import { useAuth } from "../../firebase/AuthContent";
-import { languageDictionary, DiscussionSummary } from "../../types";
-import { Button, Container, Row, Col, Form, Card } from "react-bootstrap";
-import SummaryModal from "./SummaryModal";
-import LimitModal from "./LimitModal";
-import FinishButton from "./FinishButton";
-import RecordRTC from 'recordrtc';
-
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDiscussion } from '../../hooks/DiscussionContext';
+import { firestore } from '../../firebase/firebase';
+import { useAuth } from '../../firebase/AuthContent';
+import { languageDictionary, DiscussionSummary } from '../../types';
+import { Button, Container, Row, Col, Form, Card } from 'react-bootstrap';
+import SummaryModal from './SummaryModal';
+import LimitModal from './LimitModal';
+import FinishButton from './FinishButton';
 
 function Discussion() {
   const {
@@ -22,16 +20,15 @@ function Discussion() {
     setSpeakingRate,
   } = useDiscussion();
   const [recording, setRecording] = useState(false);
-    // const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    //   null
-    // );
-  const [mediaRecorder, setMediaRecorder] = useState<RecordRTC | null>(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    null,
+  );
   const audioChunks = useRef<Blob[]>([]);
   const [isReadyToFinish, setIsReadyToFinish] = useState(false);
   const [isReadyToStart, setIsReadyToStart] = useState(true);
   const { user } = useAuth();
-  const [transcribedText, setTranscribedText] = useState("");
-  const [responseText, setResponseText] = useState("");
+  const [transcribedText, setTranscribedText] = useState('');
+  const [responseText, setResponseText] = useState('');
   const [showSummary, setShowSummary] = useState(false);
   const [summaryContent, setSummaryContent] = useState<DiscussionSummary>();
   const [showLimitReached, setShowLimitReached] = useState(false);
@@ -39,7 +36,7 @@ function Discussion() {
   useEffect(() => {
     setChatHistory([
       {
-        role: "system",
+        role: 'system',
         content: `You are going to have a debate with ${level}'s the user in ${languageDictionary[language].language}. 
       Your topic is about ${topic}. Take a side and start an argument with the user. 
       The purpose of this conversation is to improve the user's logical and critical thinking. 
@@ -53,10 +50,10 @@ function Discussion() {
     if (transcribedText) {
       const sendChatData = async () => {
         // Call chat API and update chat history
-        const chatResponse = await fetch("/chat", {
-          method: "POST",
+        const chatResponse = await fetch('/chat', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             text: chatHistory,
@@ -65,7 +62,7 @@ function Discussion() {
 
         if (!chatResponse.ok) {
           throw new Error(
-            `Error: ${chatResponse.status} ${chatResponse.statusText}`
+            `Error: ${chatResponse.status} ${chatResponse.statusText}`,
           );
         }
 
@@ -74,11 +71,11 @@ function Discussion() {
         setResponseText(responseText);
         setChatHistory([
           ...chatHistory,
-          { role: "assistant", content: responseText },
+          { role: 'assistant', content: responseText },
         ]);
       };
       sendChatData();
-      setTranscribedText("");
+      setTranscribedText('');
     }
   }, [chatHistory]);
 
@@ -100,16 +97,16 @@ function Discussion() {
             name: languageDictionary[language].name,
           },
           audioConfig: {
-            audioEncoding: "MP3",
+            audioEncoding: 'MP3',
             speakingRate: speakingRate,
           },
         };
 
         try {
           const response = await fetch(url, {
-            method: "POST",
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
           });
@@ -123,13 +120,13 @@ function Discussion() {
           const audio = new Audio(`data:audio/mp3;base64,${audioContent}`);
 
           // Add an event listener for the ended event to set isSpeaking to false
-          audio.addEventListener("ended", () => {
+          audio.addEventListener('ended', () => {
             setIsReadyToFinish(true);
             setIsReadyToStart(true);
           });
           audio.play();
         } catch (error) {
-          console.error("Error:", error);
+          console.error('Error:', error);
         } finally {
         }
       };
@@ -140,7 +137,7 @@ function Discussion() {
   useEffect(() => {
     const fetchUserDiscussions = async () => {
       if (user) {
-        const userRef = firestore.collection("users").doc(user.uid);
+        const userRef = firestore.collection('users').doc(user.uid);
 
         // Get current discussions
         const snapshot = await userRef.get();
@@ -169,7 +166,7 @@ function Discussion() {
               discussionDate.getMonth() === currentMonth &&
               discussionDate.getFullYear() === currentYear
             );
-          }
+          },
         );
 
         // If the user has had 5 or more discussions this month, show a popup message
@@ -182,80 +179,46 @@ function Discussion() {
     checkDiscussionCount();
   }, []);
 
-// Start recording
-const handleStartRecording = async () => {
-  setIsReadyToFinish(false);
-  setIsReadyToStart(false);
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const handleStartRecording = async () => {
+    // Set isSpeaking to true before playing the audio
+    setIsReadyToFinish(false);
+    setIsReadyToStart(false);
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const recorder = new MediaRecorder(stream);
 
-  const recorder = new RecordRTC(stream, {
-    type: 'audio',
-    mimeType: 'audio/webm',
-    recorderType: RecordRTC.StereoAudioRecorder
-  });
-  recorder.startRecording();
+    audioChunks.current = [];
 
-  setMediaRecorder(recorder);
-  setRecording(true);
-};
+    recorder.addEventListener('dataavailable', (event: BlobEvent) => {
+      audioChunks.current.push(event.data);
+    });
 
-// Stop recording
-const handleStopRecording = () => {
-  if (mediaRecorder) {
-      mediaRecorder.stopRecording(() => {
-          let blob = mediaRecorder.getBlob();
+    recorder.addEventListener('stop', () => {});
 
-          sendAudioData(blob);
+    setMediaRecorder(recorder);
+    recorder.start();
+    setRecording(true);
+  };
 
-          // Reset recorder
-          setMediaRecorder(null);
-          // mediaRecorder = null;
-          setRecording(false);
+  const handleStopRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      setRecording(false);
+      mediaRecorder.addEventListener('stop', async () => {
+        const audioBlob = new Blob(audioChunks.current, { type: 'audio/mp3' });
+        await sendAudioData(audioBlob);
       });
-  }
-};
-
-// const handleStartRecording = async () => {
-//   // Set isSpeaking to true before playing the audio
-//   setIsReadyToFinish(false);
-//   setIsReadyToStart(false);
-//   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-//   const recorder = new MediaRecorder(stream);
-
-//   audioChunks.current = [];
-
-//   recorder.addEventListener("dataavailable", (event: BlobEvent) => {
-//     audioChunks.current.push(event.data);
-//   });
-
-//   recorder.addEventListener("stop", () => {});
-
-//   setMediaRecorder(recorder);
-//   recorder.start();
-//   setRecording(true);
-// };
-
-// const handleStopRecording = () => {
-//   if (mediaRecorder) {
-//     mediaRecorder.stop();
-//     setRecording(false);
-//     mediaRecorder.addEventListener("stop", async () => {
-//       const audioBlob = new Blob(audioChunks.current, { type: "audio/mp3" });
-//       await sendAudioData(audioBlob);
-//     });
-//   }
-// };
-
+    }
+  };
 
   const sendAudioData = async (audioBlob: Blob) => {
     try {
       const userId = user?.uid;
       const formData = new FormData();
-      formData.append("audio", audioBlob, `audio_${userId}.mp3`);
-      formData.append("language", language);
+      formData.append('audio', audioBlob, `audio_${userId}.mp3`);
+      formData.append('language', language);
 
-      const response = await fetch("/whisper", {
-        method: "POST",
+      const response = await fetch('/whisper', {
+        method: 'POST',
         body: formData,
       });
 
@@ -266,9 +229,9 @@ const handleStopRecording = () => {
       const whisperText = await response.json();
       // console.log("Audio data sent successfully:", whisperText);
       setTranscribedText(whisperText);
-      setChatHistory([...chatHistory, { role: "user", content: whisperText }]);
+      setChatHistory([...chatHistory, { role: 'user', content: whisperText }]);
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   };
 
