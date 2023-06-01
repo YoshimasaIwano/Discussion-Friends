@@ -9,7 +9,7 @@ import DiscussionList from './DiscussionList';
 
 function Profile() {
   const { user } = useAuth();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [_, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { discussions } = useDiscussion();

@@ -1,8 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
 import { firebase, firestore } from './firebase';
 import { useAuth } from './AuthContent';
-import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
-import * as firebaseui from 'firebaseui';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import 'firebaseui/dist/firebaseui.css';
 import App from '../App';
 import { useDiscussion } from '../hooks/DiscussionContext';

@@ -1,4 +1,4 @@
-// hooks/DiscussionContext.tsx
+import React from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { firestore } from '../firebase/firebase';
 import { useAuth } from '../firebase/AuthContent';
@@ -12,13 +12,27 @@ const DiscussionContext = createContext<DiscussionContextType>({
   chatHistory: [],
   discussions: [],
   darkMode: false,
-  setLanguage: () => {},
-  setTopic: () => {},
-  setLevel: () => {},
-  setSpeakingRate: () => {},
-  setChatHistory: () => {},
-  setDiscussions: () => {},
-  toggleDarkMode: () => {},
+  setLanguage: (_: string) => {
+    _;
+  },
+  setTopic: (_: string) => {
+    _;
+  },
+  setLevel: (_: string) => {
+    _;
+  },
+  setSpeakingRate: (_: number) => {
+    _;
+  },
+  setChatHistory: (_: Chat[]) => {
+    _;
+  },
+  setDiscussions: (_: DiscussionSummary[]) => {
+    _;
+  },
+  toggleDarkMode: (_) => {
+    _;
+  },
 });
 
 export const useDiscussion = () => useContext(DiscussionContext);

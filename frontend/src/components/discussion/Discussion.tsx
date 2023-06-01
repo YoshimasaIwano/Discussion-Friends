@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useDiscussion } from '../../hooks/DiscussionContext';
 import { firestore } from '../../firebase/firebase';
 import { useAuth } from '../../firebase/AuthContent';
@@ -127,8 +126,7 @@ function Discussion() {
           audio.play();
         } catch (error) {
           console.error('Error:', error);
-        } finally {
-        }
+        } 
       };
       speakText();
     }
@@ -192,7 +190,7 @@ function Discussion() {
       audioChunks.current.push(event.data);
     });
 
-    recorder.addEventListener('stop', () => {});
+    recorder.addEventListener('stop', (_) => {_});
 
     setMediaRecorder(recorder);
     recorder.start();

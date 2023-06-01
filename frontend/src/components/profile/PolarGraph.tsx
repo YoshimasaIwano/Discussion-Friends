@@ -3,7 +3,8 @@ import HighchartsReact from 'highcharts-react-official';
 import 'highcharts/modules/series-label';
 import 'highcharts/modules/exporting';
 
-require('highcharts/highcharts-more')(Highcharts);
+import HighchartsMore from 'highcharts/highcharts-more';
+HighchartsMore(Highcharts);
 
 const PolarGraph = ({ scores }: { scores: number[] }) => {
   const options = {
