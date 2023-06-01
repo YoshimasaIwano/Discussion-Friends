@@ -31,7 +31,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "next lint --max-warnings 0",
+    "lint:fix": "next lint --max-warnings 0 --fix",
+    "format": "prettier --write --loglevel=warn '*/**/*.{js,jsx,ts,tsx,html,gql,graphql,json}'",
+    "fix": "yarn format && yarn lint:fix"
   },
   "eslintConfig": {
     "extends": [
