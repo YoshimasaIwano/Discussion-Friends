@@ -8,6 +8,8 @@ import { Button, Container, Row, Col, Form, Card } from "react-bootstrap";
 import SummaryModal from "./SummaryModal";
 import LimitModal from "./LimitModal";
 import FinishButton from "./FinishButton";
+import RecordRTC from 'recordrtc';
+
 
 function Discussion() {
   const {
@@ -20,9 +22,10 @@ function Discussion() {
     setSpeakingRate,
   } = useDiscussion();
   const [recording, setRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null
-  );
+    // const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    //   null
+    // );
+  const [mediaRecorder, setMediaRecorder] = useState<RecordRTC | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const [isReadyToFinish, setIsReadyToFinish] = useState(false);
   const [isReadyToStart, setIsReadyToStart] = useState(true);
@@ -179,36 +182,70 @@ function Discussion() {
     checkDiscussionCount();
   }, []);
 
-  const handleStartRecording = async () => {
-    // Set isSpeaking to true before playing the audio
-    setIsReadyToFinish(false);
-    setIsReadyToStart(false);
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
+// Start recording
+const handleStartRecording = async () => {
+  setIsReadyToFinish(false);
+  setIsReadyToStart(false);
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-    audioChunks.current = [];
+  const recorder = new RecordRTC(stream, {
+    type: 'audio',
+    mimeType: 'audio/webm',
+    recorderType: RecordRTC.StereoAudioRecorder
+  });
+  recorder.startRecording();
 
-    recorder.addEventListener("dataavailable", (event: BlobEvent) => {
-      audioChunks.current.push(event.data);
-    });
+  setMediaRecorder(recorder);
+  setRecording(true);
+};
 
-    recorder.addEventListener("stop", () => {});
+// Stop recording
+const handleStopRecording = () => {
+  if (mediaRecorder) {
+      mediaRecorder.stopRecording(() => {
+          let blob = mediaRecorder.getBlob();
 
-    setMediaRecorder(recorder);
-    recorder.start();
-    setRecording(true);
-  };
+          sendAudioData(blob);
 
-  const handleStopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-      setRecording(false);
-      mediaRecorder.addEventListener("stop", async () => {
-        const audioBlob = new Blob(audioChunks.current, { type: "audio/mp3" });
-        await sendAudioData(audioBlob);
+          // Reset recorder
+          setMediaRecorder(null);
+          // mediaRecorder = null;
+          setRecording(false);
       });
-    }
-  };
+  }
+};
+
+// const handleStartRecording = async () => {
+//   // Set isSpeaking to true before playing the audio
+//   setIsReadyToFinish(false);
+//   setIsReadyToStart(false);
+//   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+//   const recorder = new MediaRecorder(stream);
+
+//   audioChunks.current = [];
+
+//   recorder.addEventListener("dataavailable", (event: BlobEvent) => {
+//     audioChunks.current.push(event.data);
+//   });
+
+//   recorder.addEventListener("stop", () => {});
+
+//   setMediaRecorder(recorder);
+//   recorder.start();
+//   setRecording(true);
+// };
+
+// const handleStopRecording = () => {
+//   if (mediaRecorder) {
+//     mediaRecorder.stop();
+//     setRecording(false);
+//     mediaRecorder.addEventListener("stop", async () => {
+//       const audioBlob = new Blob(audioChunks.current, { type: "audio/mp3" });
+//       await sendAudioData(audioBlob);
+//     });
+//   }
+// };
+
 
   const sendAudioData = async (audioBlob: Blob) => {
     try {
