@@ -1,22 +1,35 @@
 /** @type {import('eslint/lib/shared/types').ConfigData} */
-module.exports = {
-  root: true,
-  env: {
-    browser: true,
-    es6: true,
-    node: true,
+module.exports = 
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
   },
-  extends: [
-    'plugin:react/recommended',
-    'airbnb-typescript',
-    'plugin:import/recommended',
-    'plugin:import/typescript',
-    'plugin:@typescript-eslint/recommended',
-    'prettier',
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
-  rules: {
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react",
+    "@typescript-eslint",
+    "import"
+  ],
+  "rules": {
     'react/react-in-jsx-scope': 'off',
     'import/extensions': [
       'error',
@@ -54,27 +67,12 @@ module.exports = {
         devDependencies: true,
       },
     ],
-    'storybook/prefer-pascal-case': 'off',
   },
-  overrides: [
-    {
-      files: ['*.tsx'],
-      rules: {
-        'react/prop-types': 'off',
-      },
-    },
-  ],
-  settings: {
-    'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx'],
-    },
-    'import/resolver': {
-      typescript: {
-        alwaysTryTypes: true,
-      },
-    },
-  },
-  parserOptions: {
-    project: './tsconfig.json', 
-  },
-};
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  }
+}
