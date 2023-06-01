@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 from waitress import serve
 from google.cloud import storage
 import os
@@ -49,6 +50,7 @@ def upload():
     return jsonify({'photoURL': image_url})
 
 @app.route('/whisper', methods=['POST'])
+@cross_origin(origins=["https://treasure-385205.uc.r.appspot.com/", "http://localhost:3000"])
 def whisper():
     if 'audio' not in request.files:
         return 'No audio file in request', 400
