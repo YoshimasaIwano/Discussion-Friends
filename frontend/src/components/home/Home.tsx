@@ -8,8 +8,6 @@ import GoogleFormLogo from '../../assets/Google_Forms_Logo_128px.png';
 import TwitterLogo from '../../assets/Twitter_social_icons.png';
 
 function Home() {
-
-  
   const {
     language,
     topic,
