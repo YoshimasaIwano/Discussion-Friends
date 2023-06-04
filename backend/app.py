@@ -16,7 +16,7 @@ from summarize import summarize_conversation
 # app = Flask(__name__, static_folder='./build', static_url_path='/')
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'images/profile'
-app.config['AUDIO_FOLDER'] = '/tmp/audio'
+app.config['AUDIO_FOLDER'] = 'audio/'
 app.config['GCS_BUCKET_NAME'] = 'treasure-385205.appspot.com'
 
 storage_client = storage.Client()
@@ -49,24 +49,30 @@ def upload():
     # Return the image URL
     return jsonify({'photoURL': image_url})
 
-@app.route('/whisper', methods=['POST'])
-@cross_origin(origins=["https://treasure-385205.uc.r.appspot.com/", "http://localhost:3000"])
+@app.route('/transcribe', methods=['POST'])
 def whisper():
     if 'audio' not in request.files:
         return 'No audio file in request', 400
 
     audio_file = request.files['audio']
     filename = secure_filename(audio_file.filename)
+    audio_path = os.path.join(app.config['AUDIO_FOLDER'], filename)
     os.makedirs(app.config['AUDIO_FOLDER'], exist_ok=True)
-    save_path = os.path.join(app.config['AUDIO_FOLDER'], filename)
-    audio_file.save(save_path)
+    audio_file.save(audio_path)
+
+    # Upload to GCS
+    blob = bucket.blob(audio_path)
+    blob.upload_from_filename(audio_path)
 
     # Extract additional information
-    language = request.form.get('language')
+    language_code = request.form.get('languageCode')
+
+    # create the audio URL
+    audio_url = f'gs://{app.config["GCS_BUCKET_NAME"]}/{audio_path}'
 
     # Process the audio file and send it to an API
     try:
-        transcribed_text = audio_to_text(save_path, language)
+        transcribed_text = audio_to_text(audio_url, language_code)
         return jsonify(transcribed_text)
     except Exception as e:
         return str(e), 500
