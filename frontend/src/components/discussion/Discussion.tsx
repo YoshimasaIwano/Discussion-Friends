@@ -3,11 +3,12 @@ import { useDiscussion } from '../../hooks/DiscussionContext';
 import { firestore } from '../../firebase/firebase';
 import { useAuth } from '../../firebase/AuthContent';
 import { languageDictionary, DiscussionSummary } from '../../types';
-import { Container, Row, Col, Form, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 import SummaryModal from './SummaryModal';
 import LimitModal from './LimitModal';
 import FinishButton from './FinishButton';
 import StartStopButton from './StartStopButton';
+import SpeechRateControl from './SpeechRateControl';
 
 function Discussion() {
   const {
@@ -256,18 +257,10 @@ function Discussion() {
               <h3 className="capitalize-bold">{topic}</h3>
             </Col>
             <Col xs={12} sm={4} className="mx-auto">
-              <Form.Group controlId="speakingRate">
-                <Form.Label>Speed</Form.Label>
-                <Form.Control
-                  type="range"
-                  min="0.25"
-                  max="4.0"
-                  step="0.01"
-                  value={speakingRate}
-                  onChange={(e) => setSpeakingRate(parseFloat(e.target.value))}
-                />
-                <p>{speakingRate.toFixed(2)}</p>
-              </Form.Group>
+              <SpeechRateControl
+                speakingRate={speakingRate}
+                setSpeakingRate={setSpeakingRate}
+              />
             </Col>
           </Row>
         </Col>
