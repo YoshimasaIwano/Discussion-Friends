@@ -3,10 +3,11 @@ import { useDiscussion } from '../../hooks/DiscussionContext';
 import { firestore } from '../../firebase/firebase';
 import { useAuth } from '../../firebase/AuthContent';
 import { languageDictionary, DiscussionSummary } from '../../types';
-import { Button, Container, Row, Col, Form, Card } from 'react-bootstrap';
+import { Container, Row, Col, Form, Card } from 'react-bootstrap';
 import SummaryModal from './SummaryModal';
 import LimitModal from './LimitModal';
 import FinishButton from './FinishButton';
+import StartStopButton from './StartStopButton';
 
 function Discussion() {
   const {
@@ -126,7 +127,7 @@ function Discussion() {
           audio.play();
         } catch (error) {
           console.error('Error:', error);
-        } 
+        }
       };
       speakText();
     }
@@ -190,7 +191,9 @@ function Discussion() {
       audioChunks.current.push(event.data);
     });
 
-    recorder.addEventListener('stop', (_) => {_});
+    recorder.addEventListener('stop', (_) => {
+      _;
+    });
 
     setMediaRecorder(recorder);
     recorder.start();
@@ -271,22 +274,12 @@ function Discussion() {
       </Row>
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
-          <div className="d-flex justify-content-center mb-3">
-            <Button
-              onClick={handleStartRecording}
-              disabled={recording || !isReadyToStart}
-              className="me-2 rounded-circle record-button start-button mx-auto"
-            >
-              START
-            </Button>
-            <Button
-              onClick={handleStopRecording}
-              disabled={!recording}
-              className="rounded-circle record-button stop-button mx-auto"
-            >
-              STOP
-            </Button>
-          </div>
+          <StartStopButton
+            recording={recording}
+            isReadyToStart={isReadyToStart}
+            handleStartRecording={handleStartRecording}
+            handleStopRecording={handleStopRecording}
+          />
         </Col>
       </Row>
       <Row className="justify-content-center mt-3">
