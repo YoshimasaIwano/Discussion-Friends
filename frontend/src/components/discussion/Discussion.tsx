@@ -202,7 +202,7 @@ function Discussion() {
       mediaRecorder.stop();
       setRecording(false);
       mediaRecorder.addEventListener('stop', async () => {
-        const audioBlob = new Blob(audioChunks.current, { type: 'audio/mp3' });
+        const audioBlob = new Blob(audioChunks.current, { type: 'audio/wav' });
         await sendAudioData(audioBlob);
       });
     }
@@ -212,10 +212,10 @@ function Discussion() {
     try {
       const userId = user?.uid;
       const formData = new FormData();
-      formData.append('audio', audioBlob, `audio_${userId}.mp3`);
-      formData.append('language', language);
+      formData.append('audio', audioBlob, `audio_${userId}.wav`);
+      formData.append('languageCode', languageDictionary[language].languageCode);
 
-      const response = await fetch('/whisper', {
+      const response = await fetch('/transcribe', {
         method: 'POST',
         body: formData,
       });
