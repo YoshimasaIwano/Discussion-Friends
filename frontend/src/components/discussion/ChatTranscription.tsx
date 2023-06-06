@@ -1,4 +1,8 @@
-const ChatTranscription =>({ chatHistory }) {
+import { Card } from 'react-bootstrap';
+import { useDiscussion } from '../../hooks/DiscussionContext';
+
+const ChatTranscription = () => {
+  const { chatHistory } = useDiscussion();
   return (
     <Card bg="light">
       <Card.Header as="h5" className="text-center">
@@ -17,4 +21,6 @@ const ChatTranscription =>({ chatHistory }) {
       </Card.Body>
     </Card>
   );
-}
+};
+
+export default ChatTranscription;

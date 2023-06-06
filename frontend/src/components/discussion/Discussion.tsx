@@ -3,12 +3,13 @@ import { useDiscussion } from '../../hooks/DiscussionContext';
 import { firestore } from '../../firebase/firebase';
 import { useAuth } from '../../firebase/AuthContent';
 import { languageDictionary, DiscussionSummary } from '../../types';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import SummaryModal from './SummaryModal';
 import LimitModal from './LimitModal';
 import FinishButton from './FinishButton';
 import StartStopButton from './StartStopButton';
 import SpeechRateControl from './SpeechRateControl';
+import ChatTranscription from './ChatTranscription';
 
 function Discussion() {
   const {
@@ -277,26 +278,7 @@ function Discussion() {
       </Row>
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
-          <Card bg="light">
-            <Card.Header as="h5" className="text-center">
-              Transcription
-            </Card.Header>
-            <Card.Body>
-              {chatHistory.length > 1 ? (
-                <div
-                  className={`mb-3 ${chatHistory[chatHistory.length - 1].role}`}
-                >
-                  <span>{chatHistory[chatHistory.length - 1].content}</span>
-                </div>
-              ) : (
-                <div className="mb-3 text-center">
-                  <span>
-                    Start to talk and you will see each transcription here
-                  </span>
-                </div>
-              )}
-            </Card.Body>
-          </Card>
+          <ChatTranscription />
         </Col>
       </Row>
       <Row className="justify-content-center mt-3">
