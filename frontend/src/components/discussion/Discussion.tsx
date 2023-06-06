@@ -8,8 +8,8 @@ import SummaryModal from './SummaryModal';
 import LimitModal from './LimitModal';
 import FinishButton from './FinishButton';
 import StartStopButton from './StartStopButton';
-import SpeechRateControl from './SpeechRateControl';
 import ChatTranscription from './ChatTranscription';
+import DiscussionConfig from './DiscussionDonfig';
 
 function Discussion() {
   const {
@@ -19,7 +19,6 @@ function Discussion() {
     chatHistory,
     speakingRate,
     setChatHistory,
-    setSpeakingRate,
   } = useDiscussion();
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
@@ -240,32 +239,7 @@ function Discussion() {
 
   return (
     <Container className="vh-100">
-      <Row className="justify-content-center mt-5 ">
-        <Col xs={12} md={8} lg={6}>
-          <Row className="gx-3 text-center">
-            <Col xs={12} sm={4} className="mx-auto">
-              <div>
-                <strong>Language:</strong>
-              </div>
-              <h3 className="capitalize-bold">
-                {languageDictionary[language].language}
-              </h3>
-            </Col>
-            <Col xs={12} sm={4} className="mx-auto">
-              <div>
-                <strong>Topic:</strong>
-              </div>
-              <h3 className="capitalize-bold">{topic}</h3>
-            </Col>
-            <Col xs={12} sm={4} className="mx-auto">
-              <SpeechRateControl
-                speakingRate={speakingRate}
-                setSpeakingRate={setSpeakingRate}
-              />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+      <DiscussionConfig/>
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
           <StartStopButton
@@ -295,7 +269,6 @@ function Discussion() {
         summaryContent={summaryContent}
         setShowSummary={setShowSummary}
       />
-
       {showLimitReached && (
         <LimitModal setShowLimitReached={setShowLimitReached} />
       )}
