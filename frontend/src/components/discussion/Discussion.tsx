@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDiscussion } from '../../hooks/DiscussionContext';
 import { firestore } from '../../firebase/firebase';
 import { useAuth } from '../../firebase/AuthContent';
 import { languageDictionary, DiscussionSummary } from '../../types';
 import { Container, Row, Col } from 'react-bootstrap';
+import RecordRTC from 'recordrtc';
 import SummaryModal from './SummaryModal';
 import LimitModal from './LimitModal';
 import FinishButton from './FinishButton';
@@ -12,19 +13,10 @@ import ChatTranscription from './ChatTranscription';
 import DiscussionConfig from './DiscussionDonfig';
 
 function Discussion() {
-  const {
-    language,
-    topic,
-    level,
-    chatHistory,
-    speakingRate,
-    setChatHistory,
-  } = useDiscussion();
+  const { language, topic, level, chatHistory, speakingRate, setChatHistory } =
+    useDiscussion();
   const [recording, setRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null,
-  );
-  const audioChunks = useRef<Blob[]>([]);
+  const [recordRTC, setRecordRTC] = useState<RecordRTC | null>(null);
   const [isReadyToFinish, setIsReadyToFinish] = useState(false);
   const [isReadyToStart, setIsReadyToStart] = useState(true);
   const { user } = useAuth();
@@ -179,35 +171,29 @@ function Discussion() {
     checkDiscussionCount();
   }, []);
 
-  const handleStartRecording = async () => {
-    // Set isSpeaking to true before playing the audio
-    setIsReadyToFinish(false);
-    setIsReadyToStart(false);
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
+  const handleStartRecording = () => {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      const recorder = new RecordRTC(stream, {
+        type: 'audio',
+        mimeType: 'audio/webm',
+        recorderType: RecordRTC.StereoAudioRecorder,
+      });
 
-    audioChunks.current = [];
-
-    recorder.addEventListener('dataavailable', (event: BlobEvent) => {
-      audioChunks.current.push(event.data);
+      recorder.startRecording();
+      setRecordRTC(recorder);
+      setRecording(true);
     });
-
-    recorder.addEventListener('stop', (_) => {
-      _;
-    });
-
-    setMediaRecorder(recorder);
-    recorder.start();
-    setRecording(true);
   };
 
+
   const handleStopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-      setRecording(false);
-      mediaRecorder.addEventListener('stop', async () => {
-        const audioBlob = new Blob(audioChunks.current, { type: 'audio/mp3' });
+    if (recordRTC) {
+      recordRTC.stopRecording(async () => {
+        const audioBlob = recordRTC.getBlob();
         await sendAudioData(audioBlob);
+        recordRTC.reset(); // This releases the stream
+        setRecordRTC(null);
+        setRecording(false);
       });
     }
   };
@@ -239,7 +225,7 @@ function Discussion() {
 
   return (
     <Container className="vh-100">
-      <DiscussionConfig/>
+      <DiscussionConfig />
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
           <StartStopButton
