@@ -1,13 +1,46 @@
 import { firebase, firestore } from './firebase';
 import { useAuth } from './AuthContent';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
+import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
 import App from '../App';
 import { useDiscussion } from '../hooks/DiscussionContext';
+import { useEffect, useRef } from 'react';
+
+import googleSignInBtn from '../assets/btn_google_signin_light_normal_web.png';
+
 
 function SignIn() {
   const { darkMode } = useDiscussion();
   const { user } = useAuth();
+  const uiRef = useRef<firebaseui.auth.AuthUI | null>(null);
+  const signInContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      saveUserData(user); // Save user data when the user is signed in
+    }
+    if (!user && signInContainerRef.current) {
+      if (!uiRef.current) {
+        uiRef.current = new firebaseui.auth.AuthUI(firebase.auth());
+      }
+
+      const uiConfig = {
+        callbacks: {
+          signInSuccessWithAuthResult: () => {
+            return false;
+          },
+        },
+        signInOptions: [
+          firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        ],
+      };
+
+      uiRef.current.start('#firebaseui-auth-container', uiConfig);
+    }
+  }, [user]);
+
+
 
   const saveUserData = async (user: firebase.User) => {
     const userRef = firestore.collection('users').doc(user.uid);
@@ -27,7 +60,8 @@ function SignIn() {
     }
   };
 
-  const handleSignInWithGoogle = async () => {
+  const handleSignInWithGoogle = async (e: React.MouseEvent) => {
+    e.preventDefault();
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
       const result = await firebase.auth().signInWithPopup(provider);
@@ -48,12 +82,16 @@ function SignIn() {
             <Col className="text-center">
               <h1 className="display-4">Welcome Back</h1>
               <p className="lead mb-4">Improve your learning productivity</p>
-              <Button
-                variant="outline-primary"
+              <div
+                id="firebaseui-auth-container"
+                ref={signInContainerRef}
+              ></div>
+              <button
                 onClick={handleSignInWithGoogle}
+                className="mt-3 google-signin-btn"
               >
-                Sign in with Google
-              </Button>
+                <img src={googleSignInBtn} alt="Sign in with Google" />
+              </button>
             </Col>
           </Row>
         ) : (
