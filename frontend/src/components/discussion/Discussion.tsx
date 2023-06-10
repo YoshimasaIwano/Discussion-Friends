@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDiscussion } from '../../hooks/DiscussionContext';
 import { firestore } from '../../firebase/firebase';
 import { useAuth } from '../../firebase/AuthContent';
@@ -16,10 +16,7 @@ function Discussion() {
   const { language, topic, level, chatHistory, speakingRate, setChatHistory } =
     useDiscussion();
   const [recording, setRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null,
-  );
-  const audioChunks = useRef<Blob[]>([]);
+  const [recordRTC, setRecordRTC] = useState<RecordRTC | null>(null);
   const [isReadyToFinish, setIsReadyToFinish] = useState(false);
   const [isReadyToStart, setIsReadyToStart] = useState(true);
   const { user } = useAuth();
@@ -174,50 +171,29 @@ function Discussion() {
     checkDiscussionCount();
   }, []);
 
-  const handleStartRecording = async () => {
-    // Set isSpeaking to true before playing the audio
-    setIsReadyToFinish(false);
-    setIsReadyToStart(false);
-    let recorder; // Declare recorder here
-
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(async (stream) => {
-        if (window.MediaRecorder) {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-          });
-          recorder = new MediaRecorder(stream);
-          // Use MediaRecorder API
-          // Move the event listeners and other code here, inside the callback
-          audioChunks.current = [];
-
-          recorder.addEventListener('dataavailable', (event: BlobEvent) => {
-            audioChunks.current.push(event.data);
-          });
-
-          recorder.addEventListener('stop', (_) => {_});
-
-          setMediaRecorder(recorder);
-          recorder.start();
-        } else {
-          recorder = new RecordRTC(stream, {
-            type: "audio",
-            mimeType: "audio/webm", 
-          });
-        }
-        setRecording(true);
+  const handleStartRecording = () => {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      const recorder = new RecordRTC(stream, {
+        type: 'audio',
+        mimeType: 'audio/webm',
+        recorderType: RecordRTC.StereoAudioRecorder,
       });
+
+      recorder.startRecording();
+      setRecordRTC(recorder);
+      setRecording(true);
+    });
   };
 
 
   const handleStopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-      setRecording(false);
-      mediaRecorder.addEventListener('stop', async () => {
-        const audioBlob = new Blob(audioChunks.current, { type: 'audio/mp3' });
+    if (recordRTC) {
+      recordRTC.stopRecording(async () => {
+        const audioBlob = recordRTC.getBlob();
         await sendAudioData(audioBlob);
+        recordRTC.reset(); // This releases the stream
+        setRecordRTC(null);
+        setRecording(false);
       });
     }
   };
