@@ -4,6 +4,7 @@ import { firestore } from '../../firebase/firebase';
 import { useAuth } from '../../firebase/AuthContent';
 import { languageDictionary, DiscussionSummary } from '../../types';
 import { Container, Row, Col } from 'react-bootstrap';
+import RecordRTC from 'recordrtc';
 import SummaryModal from './SummaryModal';
 import LimitModal from './LimitModal';
 import FinishButton from './FinishButton';
@@ -12,14 +13,8 @@ import ChatTranscription from './ChatTranscription';
 import DiscussionConfig from './DiscussionDonfig';
 
 function Discussion() {
-  const {
-    language,
-    topic,
-    level,
-    chatHistory,
-    speakingRate,
-    setChatHistory,
-  } = useDiscussion();
+  const { language, topic, level, chatHistory, speakingRate, setChatHistory } =
+    useDiscussion();
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
@@ -183,23 +178,38 @@ function Discussion() {
     // Set isSpeaking to true before playing the audio
     setIsReadyToFinish(false);
     setIsReadyToStart(false);
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
+    let recorder; // Declare recorder here
 
-    audioChunks.current = [];
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(async (stream) => {
+        if (window.MediaRecorder) {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+          recorder = new MediaRecorder(stream);
+          // Use MediaRecorder API
+          // Move the event listeners and other code here, inside the callback
+          audioChunks.current = [];
 
-    recorder.addEventListener('dataavailable', (event: BlobEvent) => {
-      audioChunks.current.push(event.data);
-    });
+          recorder.addEventListener('dataavailable', (event: BlobEvent) => {
+            audioChunks.current.push(event.data);
+          });
 
-    recorder.addEventListener('stop', (_) => {
-      _;
-    });
+          recorder.addEventListener('stop', (_) => {_});
 
-    setMediaRecorder(recorder);
-    recorder.start();
-    setRecording(true);
+          setMediaRecorder(recorder);
+          recorder.start();
+        } else {
+          recorder = new RecordRTC(stream, {
+            type: "audio",
+            mimeType: "audio/webm", 
+          });
+        }
+        setRecording(true);
+      });
   };
+
 
   const handleStopRecording = () => {
     if (mediaRecorder) {
@@ -239,7 +249,7 @@ function Discussion() {
 
   return (
     <Container className="vh-100">
-      <DiscussionConfig/>
+      <DiscussionConfig />
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
           <StartStopButton
