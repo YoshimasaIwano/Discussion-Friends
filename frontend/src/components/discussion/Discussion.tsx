@@ -1,28 +1,22 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDiscussion } from '../../hooks/DiscussionContext';
 import { firestore } from '../../firebase/firebase';
 import { useAuth } from '../../firebase/AuthContent';
 import { languageDictionary, DiscussionSummary } from '../../types';
-import { Button, Container, Row, Col, Form, Card } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
+import RecordRTC from 'recordrtc';
 import SummaryModal from './SummaryModal';
 import LimitModal from './LimitModal';
 import FinishButton from './FinishButton';
+import StartStopButton from './StartStopButton';
+import ChatTranscription from './ChatTranscription';
+import DiscussionConfig from './DiscussionDonfig';
 
 function Discussion() {
-  const {
-    language,
-    topic,
-    level,
-    chatHistory,
-    speakingRate,
-    setChatHistory,
-    setSpeakingRate,
-  } = useDiscussion();
+  const { language, topic, level, chatHistory, speakingRate, setChatHistory } =
+    useDiscussion();
   const [recording, setRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null,
-  );
-  const audioChunks = useRef<Blob[]>([]);
+  const [recordRTC, setRecordRTC] = useState<RecordRTC | null>(null);
   const [isReadyToFinish, setIsReadyToFinish] = useState(false);
   const [isReadyToStart, setIsReadyToStart] = useState(true);
   const { user } = useAuth();
@@ -126,7 +120,7 @@ function Discussion() {
           audio.play();
         } catch (error) {
           console.error('Error:', error);
-        } 
+        }
       };
       speakText();
     }
@@ -177,33 +171,29 @@ function Discussion() {
     checkDiscussionCount();
   }, []);
 
-  const handleStartRecording = async () => {
-    // Set isSpeaking to true before playing the audio
-    setIsReadyToFinish(false);
-    setIsReadyToStart(false);
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
+  const handleStartRecording = () => {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      const recorder = new RecordRTC(stream, {
+        type: 'audio',
+        mimeType: 'audio/webm',
+        recorderType: RecordRTC.StereoAudioRecorder,
+      });
 
-    audioChunks.current = [];
-
-    recorder.addEventListener('dataavailable', (event: BlobEvent) => {
-      audioChunks.current.push(event.data);
+      recorder.startRecording();
+      setRecordRTC(recorder);
+      setRecording(true);
     });
-
-    recorder.addEventListener('stop', (_) => {_});
-
-    setMediaRecorder(recorder);
-    recorder.start();
-    setRecording(true);
   };
 
+
   const handleStopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-      setRecording(false);
-      mediaRecorder.addEventListener('stop', async () => {
-        const audioBlob = new Blob(audioChunks.current, { type: 'audio/mp3' });
+    if (recordRTC) {
+      recordRTC.stopRecording(async () => {
+        const audioBlob = recordRTC.getBlob();
         await sendAudioData(audioBlob);
+        recordRTC.reset(); // This releases the stream
+        setRecordRTC(null);
+        setRecording(false);
       });
     }
   };
@@ -235,82 +225,20 @@ function Discussion() {
 
   return (
     <Container className="vh-100">
-      <Row className="justify-content-center mt-5 ">
+      <DiscussionConfig />
+      <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
-          <Row className="gx-3 text-center">
-            <Col xs={12} sm={4} className="mx-auto">
-              <div>
-                <strong>Language:</strong>
-              </div>
-              <h3 className="capitalize-bold">
-                {languageDictionary[language].language}
-              </h3>
-            </Col>
-            <Col xs={12} sm={4} className="mx-auto">
-              <div>
-                <strong>Topic:</strong>
-              </div>
-              <h3 className="capitalize-bold">{topic}</h3>
-            </Col>
-            <Col xs={12} sm={4} className="mx-auto">
-              <Form.Group controlId="speakingRate">
-                <Form.Label>Speed</Form.Label>
-                <Form.Control
-                  type="range"
-                  min="0.25"
-                  max="4.0"
-                  step="0.01"
-                  value={speakingRate}
-                  onChange={(e) => setSpeakingRate(parseFloat(e.target.value))}
-                />
-                <p>{speakingRate.toFixed(2)}</p>
-              </Form.Group>
-            </Col>
-          </Row>
+          <StartStopButton
+            recording={recording}
+            isReadyToStart={isReadyToStart}
+            handleStartRecording={handleStartRecording}
+            handleStopRecording={handleStopRecording}
+          />
         </Col>
       </Row>
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
-          <div className="d-flex justify-content-center mb-3">
-            <Button
-              onClick={handleStartRecording}
-              disabled={recording || !isReadyToStart}
-              className="me-2 rounded-circle record-button start-button mx-auto"
-            >
-              START
-            </Button>
-            <Button
-              onClick={handleStopRecording}
-              disabled={!recording}
-              className="rounded-circle record-button stop-button mx-auto"
-            >
-              STOP
-            </Button>
-          </div>
-        </Col>
-      </Row>
-      <Row className="justify-content-center mt-3">
-        <Col xs={12} md={8} lg={6}>
-          <Card bg="light">
-            <Card.Header as="h5" className="text-center">
-              Transcription
-            </Card.Header>
-            <Card.Body>
-              {chatHistory.length > 1 ? (
-                <div
-                  className={`mb-3 ${chatHistory[chatHistory.length - 1].role}`}
-                >
-                  <span>{chatHistory[chatHistory.length - 1].content}</span>
-                </div>
-              ) : (
-                <div className="mb-3 text-center">
-                  <span>
-                    Start to talk and you will see each transcription here
-                  </span>
-                </div>
-              )}
-            </Card.Body>
-          </Card>
+          <ChatTranscription />
         </Col>
       </Row>
       <Row className="justify-content-center mt-3">
@@ -327,7 +255,6 @@ function Discussion() {
         summaryContent={summaryContent}
         setShowSummary={setShowSummary}
       />
-
       {showLimitReached && (
         <LimitModal setShowLimitReached={setShowLimitReached} />
       )}
