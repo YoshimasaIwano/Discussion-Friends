@@ -17,9 +17,9 @@ function LanguageSelection({ language, setLanguage }: LanguageSelectionProps) {
         onChange={(e) => setLanguage(e.target.value)}
       >
         <option value="en">English</option>
-        {/* <option value="ja">Japanese</option>
+        <option value="ja">Japanese</option>
         <option value="es">Spanish</option>
-        <option value="zh">Chinese</option> */}
+        <option value="zh">Chinese</option>
         {/* // Add more options here */}
       </Form.Control>
     </Form.Group>

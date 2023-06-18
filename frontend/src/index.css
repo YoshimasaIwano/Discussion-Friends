@@ -61,6 +61,17 @@ body {
   font-size: 1rem;
 }
 
+/* signin page */
+.google-signin-btn {
+  border: none;
+  background: transparent;
+}
+
+.google-signin-btn img {
+  width: 191px;
+  height: 46px;
+}
+
 /* topbar */
 .heading-gym {
   color: #77b700;
