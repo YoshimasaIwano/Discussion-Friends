@@ -36,11 +36,10 @@ function Discussion() {
     setChatHistory([
       {
         role: 'system',
-        content: `You are going to have a debate with ${level}'s the user in ${languageDictionary[language].language}. 
-      Your topic is about ${topic}. Take a side and start an argument with the user. 
-      The purpose of this conversation is to improve the user's logical and critical thinking. 
-      Respond as short as possible. 
-      Remember, the purpose of this conversation is to improve the user's logical thinking and critical thinking.`,
+        content: `You are going to have a conversation with ${level}'s the user in ${languageDictionary[language].language}.
+        You are going to talk as if you are the user's ${topic}. 
+        The purpose of this conversation is to improve the user's conversational English skills. Respond as short as possible.
+        Remember, the purpose of this conversation is to improve the user's proficiency in conversational English skills. `,
       },
     ]);
   }, [language, topic, level]);

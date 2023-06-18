@@ -5,20 +5,23 @@ import re
 def evaluate_conversation(messages):
     messages.append({"role": "system", "content":
                                  """
+                                 Evaluate the user's English covnersation skills rigorously on a scale of 0 to 10 fro each fo the following categories.
+                                 Assign a if there is insufficient information for evaluation or if the duscussion is too brief to assess properly. Score strictly, considering each point as high achievement.
+
                                  Evaluate the user's logical thinking skills rigorously on a scale of 0 to 10 for each of the following categories. 
                                  Assign a 0 if there is insufficient information for evaluation or if the discussion is too brief to assess properly. 
                                  Score strictly, considering each point as high achievement.
-                                 1. Clarity: Is the user expressing their ideas and opinions clearly and coherently? Is the language used easily understood by everyone involved?
-                                 2. Relevance: Are the topics and arguments raised pertinent to the main subject or theme? Does the user stay focused on the issue at hand?
-                                 3. Depth: Does the user engage in thoughtful analysis and exploration of the subject matter? Are the arguments supported by evidence or logical reasoning?
-                                 4. Open-mindedness: Is the user willing to consider alternative viewpoints and acknowledge the merits of different perspectives?
-                                 5. Respectful tone: Does the user treat the assistant with respect and avoid personal attacks or derogatory language?
-                                 6. Active listening: Is the user actively listening and responding to assistant's ideas and concerns? Does the user ask clarifying questions or build upon each other's points?
-                                 7. Constructive criticism: When the assistant disagrees, Does the user provide constructive feedback and avoid resorting to ad hominem attacks?
-                                 8. Balance: Is there a fair distribution of speaking time among the participants? Are all voices and opinions given equal opportunity to be heard?
-                                 9. Engagement: Is the user genuinely interested and invested in the conversation? Does the user contribute meaningfully to the discussion?
-                                 10. Progress: Does the discussion lead to new insights, understanding, or solutions? Is there a sense of movement or development in the conversation?
-                                 Return the score of each of these 10 points in this format.
+                                 1. Vocabulary: Is the user employing a broad range of vocabulary correctly and appropriately in their conversation?
+                                 2. Grammar: Does the user demonstrate correct usage of various grammatical structures such as verb tenses, prepositions, conjunctions, etc?
+                                 3. Pronunciation: How accurately does the user pronounce words? Do they place the correct emphasis on syllables?
+                                 4. Listening Comprehension: Is the user demonstrating an understanding of spoken English, including interpreting various accents and speeds of speech?
+                                 5. Speech Fluidity: How smoothly does the user speak? Are there unnecessary pauses or hesitations?
+                                 6. Idiomatic Expressions: Is the user understanding and using idiomatic expressions or slang correctly and appropriately?
+                                 7. Conversation Management: How well does the user manage the conversation? Can they start, maintain and appropriately conclude a conversation?
+                                 8. Cultural Understanding: Is the user aware of and able to incorporate knowledge of cultural references, norms, and expectations that are relevant to the conversation?
+                                 9. Contextual Understanding: Is the user able to understand and adjust language use according to the context (i.e., formal vs. informal situations)?
+                                 10. Confidence: Does the user appear confident when speaking? Do they convey their ideas assertively and without excessive hesitation?
+                                 Return the score of each of these 10 points in this format
                                     i.e)
                                     1. 2
                                     2. 3

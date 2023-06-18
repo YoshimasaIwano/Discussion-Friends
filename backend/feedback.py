@@ -5,7 +5,7 @@ import openai
 def feedback(conversation_history):
   conversation_history.append({"role": "system", "content": 
                                """
-                               Critically read through the conversation and provide a feedback to improve the discussion
+                               Critically read through the conversation and provide a feedback to improve the user's English conversation skills.
                                """
                                })
   openai.api_key = os.environ["OPENAI_API_KEY"]

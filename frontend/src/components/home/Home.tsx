@@ -39,9 +39,9 @@ function Home() {
     <Container className="text-center my-5 vh-100">
       <CSSTransition in={true} timeout={1000} classNames="fade" appear>
         <div>
-          <h1 className="display-4">Rally</h1>
+          <h1 className="display-4">Rally 英会話</h1>
           <p className="lead mb-4">
-            The digital dojo where you master debate and sharpen your intellect!
+            Let&apos;s practice conversational English with Rally!
           </p>
         </div>
       </CSSTransition>

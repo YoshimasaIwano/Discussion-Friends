@@ -9,7 +9,7 @@ def summarize_conversation(messages, language):
                                  """
                                  summerize the conversation within 500 words in English.
                                  List the main points of the conversation and the conclusion of the conversation. 
-                                 You will provide a feedback to improve the discussion.
+                                 You will provide a feedback to improve the user's conversational English skills.
                                  i.e)
                                     Main points: Big bang theory, evolution, and creationism.
                                     Conclusion: The big bang theory is the most plausible theory of the origin of the universe.
