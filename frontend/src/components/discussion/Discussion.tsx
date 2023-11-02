@@ -1,25 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDiscussion } from '../../hooks/DiscussionContext';
-import { firestore } from '../../firebase/firebase';
-import { useAuth } from '../../firebase/AuthContent';
+import { useDiscussion } from '../../hooks/useDiscussionContext';
 import { languageDictionary, DiscussionSummary } from '../../types';
 import { Container, Row, Col } from 'react-bootstrap';
 import SummaryModal from './SummaryModal';
-import LimitModal from './LimitModal';
+// import LimitModal from './LimitModal';
 import FinishButton from './FinishButton';
 import StartStopButton from './StartStopButton';
 import ChatTranscription from './ChatTranscription';
 import DiscussionConfig from './DiscussionDonfig';
 
 function Discussion() {
-  const {
-    language,
-    topic,
-    level,
-    chatHistory,
-    speakingRate,
-    setChatHistory,
-  } = useDiscussion();
+  const { language, topic, level, chatHistory, speakingRate, setChatHistory } =
+    useDiscussion();
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
@@ -27,12 +19,12 @@ function Discussion() {
   const audioChunks = useRef<Blob[]>([]);
   const [isReadyToFinish, setIsReadyToFinish] = useState(false);
   const [isReadyToStart, setIsReadyToStart] = useState(true);
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const [transcribedText, setTranscribedText] = useState('');
   const [responseText, setResponseText] = useState('');
   const [showSummary, setShowSummary] = useState(false);
   const [summaryContent, setSummaryContent] = useState<DiscussionSummary>();
-  const [showLimitReached, setShowLimitReached] = useState(false);
+  // const [showLimitReached, setShowLimitReached] = useState(false);
 
   useEffect(() => {
     setChatHistory([
@@ -134,50 +126,50 @@ function Discussion() {
     }
   }, [responseText]);
 
-  useEffect(() => {
-    const fetchUserDiscussions = async () => {
-      if (user) {
-        const userRef = firestore.collection('users').doc(user.uid);
+  // useEffect(() => {
+  //   const fetchUserDiscussions = async () => {
+  //     if (user) {
+  //       const userRef = firestore.collection('users').doc(user.uid);
 
-        // Get current discussions
-        const snapshot = await userRef.get();
-        const userData = snapshot.data();
-        const currentDiscussions = userData?.discussion ?? [];
+  //       // Get current discussions
+  //       const snapshot = await userRef.get();
+  //       const userData = snapshot.data();
+  //       const currentDiscussions = userData?.discussion ?? [];
 
-        return currentDiscussions;
-      }
-    };
+  //       return currentDiscussions;
+  //     }
+  //   };
 
-    const checkDiscussionCount = async () => {
-      if (user) {
-        // Assuming you have a function to get the current user's discussions...
-        const discussions = await fetchUserDiscussions();
+  //   const checkDiscussionCount = async () => {
+  //     if (user) {
+  //       // Assuming you have a function to get the current user's discussions...
+  //       const discussions = await fetchUserDiscussions();
 
-        // Get the current month and year
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
+  //       // Get the current month and year
+  //       const now = new Date();
+  //       const currentMonth = now.getMonth();
+  //       const currentYear = now.getFullYear();
 
-        // Filter the discussions for the current month
-        const discussionsThisMonth = discussions.filter(
-          (discussion: DiscussionSummary) => {
-            const discussionDate = new Date(discussion.datetime);
-            return (
-              discussionDate.getMonth() === currentMonth &&
-              discussionDate.getFullYear() === currentYear
-            );
-          },
-        );
+  //       // Filter the discussions for the current month
+  //       const discussionsThisMonth = discussions.filter(
+  //         (discussion: DiscussionSummary) => {
+  //           const discussionDate = new Date(discussion.datetime);
+  //           return (
+  //             discussionDate.getMonth() === currentMonth &&
+  //             discussionDate.getFullYear() === currentYear
+  //           );
+  //         },
+  //       );
 
-        // If the user has had 5 or more discussions this month, show a popup message
-        if (discussionsThisMonth.length >= 5) {
-          setShowLimitReached(true);
-        }
-      }
-    };
+  //       // If the user has had 5 or more discussions this month, show a popup message
+  //       if (discussionsThisMonth.length >= 5) {
+  //         setShowLimitReached(true);
+  //       }
+  //     }
+  //   };
 
-    checkDiscussionCount();
-  }, []);
+  //   checkDiscussionCount();
+  // }, []);
 
   const handleStartRecording = async () => {
     // Set isSpeaking to true before playing the audio
@@ -214,7 +206,8 @@ function Discussion() {
 
   const sendAudioData = async (audioBlob: Blob) => {
     try {
-      const userId = user?.uid;
+      // create a random user id
+      const userId = Math.random().toString(36).substring(7);
       const formData = new FormData();
       formData.append('audio', audioBlob, `audio_${userId}.mp3`);
       formData.append('language', language);
@@ -239,7 +232,7 @@ function Discussion() {
 
   return (
     <Container className="vh-100">
-      <DiscussionConfig/>
+      <DiscussionConfig />
       <Row className="justify-content-center mt-3">
         <Col xs={12} md={8} lg={6}>
           <StartStopButton
@@ -269,9 +262,9 @@ function Discussion() {
         summaryContent={summaryContent}
         setShowSummary={setShowSummary}
       />
-      {showLimitReached && (
+      {/* {showLimitReached && (
         <LimitModal setShowLimitReached={setShowLimitReached} />
-      )}
+      )} */}
     </Container>
   );
 }

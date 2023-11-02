@@ -1,7 +1,7 @@
 // Home.tsx
 import { Button, Container, Form, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useDiscussion } from '../../hooks/DiscussionContext';
+import { useDiscussion } from '../../hooks/useDiscussionContext';
 import { useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import TopicSelection from './TopicSelection';

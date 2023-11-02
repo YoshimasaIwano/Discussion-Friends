@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '../../firebase/AuthContent';
-import { firebase } from '../../firebase/firebase';
+// import { useAuth } from '../../firebase/AuthContent';
+// import { firebase } from '../../firebase/firebase';
 import { Navbar, Nav } from 'react-bootstrap';
-import { useDiscussion } from '../../hooks/DiscussionContext';
+import { useDiscussion } from '../../hooks/useDiscussionContext';
 
 function TopBar() {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const [expanded, setExpanded] = useState(false);
   const { darkMode, toggleDarkMode } = useDiscussion();
 
@@ -14,13 +14,13 @@ function TopBar() {
     setExpanded(false);
   };
 
-  const signOut = async () => {
-    try {
-      await firebase.auth().signOut();
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
+  // const signOut = async () => {
+  //   try {
+  //     await firebase.auth().signOut();
+  //   } catch (error) {
+  //     console.error('Error signing out:', error);
+  //   }
+  // };
 
   return (
     <div className="d-flex align-items-top justify-content-between">
@@ -52,7 +52,7 @@ function TopBar() {
             <Nav.Link as={NavLink} to="/Profile" onClick={handleCollapse}>
               Profile
             </Nav.Link>
-            {user && (
+            {/* {user && (
               <Nav.Link
                 onClick={() => {
                   signOut();
@@ -61,7 +61,7 @@ function TopBar() {
               >
                 SignOut
               </Nav.Link>
-            )}
+            )} */}
           </Nav>
         </Navbar.Collapse>
       </Navbar>

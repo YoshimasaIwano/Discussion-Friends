@@ -4,11 +4,10 @@ import { Container, Row, Col } from 'react-bootstrap';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
 import App from '../App';
-import { useDiscussion } from '../hooks/DiscussionContext';
+import { useDiscussion } from '../hooks/useDiscussionContext';
 import { useEffect, useRef } from 'react';
 
 import googleSignInBtn from '../assets/btn_google_signin_light_normal_web.png';
-
 
 function SignIn() {
   const { darkMode } = useDiscussion();
@@ -31,16 +30,12 @@ function SignIn() {
             return false;
           },
         },
-        signInOptions: [
-          firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        ],
+        signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID],
       };
 
       uiRef.current.start('#firebaseui-auth-container', uiConfig);
     }
   }, [user]);
-
-
 
   const saveUserData = async (user: firebase.User) => {
     const userRef = firestore.collection('users').doc(user.uid);

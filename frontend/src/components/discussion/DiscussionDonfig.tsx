@@ -1,9 +1,9 @@
 import { Col, Row } from 'react-bootstrap';
 import SpeechRateControl from './SpeechRateControl';
 import { languageDictionary } from '../../types';
-import { useDiscussion } from '../../hooks/DiscussionContext';
+import { useDiscussion } from '../../hooks/useDiscussionContext';
 
-const DiscussionConfig= () => {
+const DiscussionConfig = () => {
   const { language, topic, speakingRate, setSpeakingRate } = useDiscussion();
   return (
     <Row className="gx-3 text-center">

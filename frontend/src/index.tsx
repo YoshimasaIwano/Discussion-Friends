@@ -2,21 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { AuthProvider } from './firebase/AuthContent';
-import SignIn from './firebase/SignIn';
-import { DiscussionProvider } from './hooks/DiscussionContext';
+import { DiscussionProvider } from './hooks/useDiscussionContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import App from './App';
 
 const rootEl = document.getElementById('root');
 
 ReactDOM.render(
   <React.StrictMode>
-    <AuthProvider>
-      <DiscussionProvider>
-        <SignIn />
-      </DiscussionProvider>
-    </AuthProvider>
+    <DiscussionProvider>
+      <App />
+    </DiscussionProvider>
   </React.StrictMode>,
   rootEl,
 );

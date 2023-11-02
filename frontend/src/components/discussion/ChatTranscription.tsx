@@ -1,5 +1,5 @@
 import { Card } from 'react-bootstrap';
-import { useDiscussion } from '../../hooks/DiscussionContext';
+import { useDiscussion } from '../../hooks/useDiscussionContext';
 
 const ChatTranscription = () => {
   const { chatHistory } = useDiscussion();

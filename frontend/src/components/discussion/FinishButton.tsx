@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import { DiscussionSummary, languageDictionary } from '../../types';
-import { useDiscussion } from '../../hooks/DiscussionContext';
-import { firestore } from '../../firebase/firebase';
-import { useAuth } from '../../firebase/AuthContent';
+import { useDiscussion } from '../../hooks/useDiscussionContext';
+// import { firestore } from '../../firebase/firebase';
+// import { useAuth } from '../../firebase/AuthContent';
 import SendingSummaryModal from './SendingSummaryModal';
 
 interface FinishButtonProps {
@@ -19,27 +19,27 @@ const FinishButton: React.FC<FinishButtonProps> = ({
   setShowSummary,
   setSummaryContent,
 }) => {
-  const { language, topic, level, chatHistory, setDiscussions } =
+  const { language, topic, level, chatHistory } =
     useDiscussion();
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const [sending, setSending] = useState(false);
-  const addToFirestore = async (summaryData: DiscussionSummary) => {
-    if (user) {
-      const userRef = firestore.collection('users').doc(user.uid);
+  // const addToFirestore = async (summaryData: DiscussionSummary) => {
+    // if (user) {
+    //   const userRef = firestore.collection('users').doc(user.uid);
 
-      // Get current discussions
-      const snapshot = await userRef.get();
-      const userData = snapshot.data();
-      const currentDiscussions = userData?.discussion ?? [];
+    //   // Get current discussions
+    //   const snapshot = await userRef.get();
+    //   const userData = snapshot.data();
+    //   const currentDiscussions = userData?.discussion ?? [];
 
-      // Update the discussions array
-      await userRef.update({
-        discussion: [...currentDiscussions, summaryData],
-      });
+    //   // Update the discussions array
+    //   await userRef.update({
+    //     discussion: [...currentDiscussions, summaryData],
+    //   });
 
-      setDiscussions([...currentDiscussions, summaryData]);
-    }
-  };
+  //     setDiscussions([...currentDiscussions, summaryData]);
+  //   // }
+  // };
 
   const sendSummary = async () => {
     setSending(true);
@@ -76,9 +76,9 @@ const FinishButton: React.FC<FinishButtonProps> = ({
 
       setShowSummary(true);
 
-      if (user) {
-        await addToFirestore(discussionSummary);
-      }
+      // if (user) {
+      //   await addToFirestore(discussionSummary);
+      // }
     } catch (error) {
       console.error('Error:', error);
     } finally {

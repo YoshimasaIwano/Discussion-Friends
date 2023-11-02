@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
+from flask_cors import cross_origin
 from waitress import serve
 from google.cloud import storage
 import os
@@ -13,11 +13,13 @@ from chat import chat_gpt_debater
 from summarize import summarize_conversation
 # from feedback import feedback
 
-# app = Flask(__name__, static_folder='./build', static_url_path='/')
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'images/profile'
-app.config['AUDIO_FOLDER'] = '/tmp/audio'
-app.config['GCS_BUCKET_NAME'] = 'treasure-385205.appspot.com'
+# if os.environ.get('DEPLOYMENT_MODE') == 'production':
+app = Flask(__name__, static_folder='./build', static_url_path='/')
+# else:
+#     app = Flask(__name__)
+# app.config['UPLOAD_FOLDER'] = 'images/profile'
+app.config['AUDIO_FOLDER'] = '/tmp/audio'  # tmp is necessary for Google Cloud Platform
+app.config['GCS_BUCKET_NAME'] = 'ai-brai.appspot.com'
 
 storage_client = storage.Client()
 bucket = storage_client.get_bucket(app.config['GCS_BUCKET_NAME'])
@@ -26,31 +28,30 @@ bucket = storage_client.get_bucket(app.config['GCS_BUCKET_NAME'])
 def index():
     return app.send_static_file('index.html')
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    # Check if the request contains an image file
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image file found in request'}), 400
+# @app.route('/upload', methods=['POST'])
+# def upload():
+#     # Check if the request contains an image file
+#     if 'image' not in request.files:
+#         return jsonify({'error': 'No image file found in request'}), 400
 
-    image = request.files['image']
+#     image = request.files['image']
 
-    # Check if the image filename is not empty
-    if image.filename == '':
-        return jsonify({'error': 'No selected image file'}), 400
+#     # Check if the image filename is not empty
+#     if image.filename == '':
+#         return jsonify({'error': 'No selected image file'}), 400
 
-    # Save the image to Google Cloud Storage
-    image_path = f"{app.config['UPLOAD_FOLDER']}/{image.filename}"
-    blob = bucket.blob(image_path)
-    blob.upload_from_string(image.read(), content_type=image.content_type)
+#     # Save the image to Google Cloud Storage
+#     image_path = f"{app.config['UPLOAD_FOLDER']}/{image.filename}"
+#     blob = bucket.blob(image_path)
+#     blob.upload_from_string(image.read(), content_type=image.content_type)
 
-    # Generate the image URL
-    image_url = f'https://storage.googleapis.com/{app.config["GCS_BUCKET_NAME"]}/{image_path}'
+#     # Generate the image URL
+#     image_url = f'https://storage.googleapis.com/{app.config["GCS_BUCKET_NAME"]}/{image_path}'
 
-    # Return the image URL
-    return jsonify({'photoURL': image_url})
+#     # Return the image URL
+#     return jsonify({'photoURL': image_url})
 
 @app.route('/whisper', methods=['POST'])
-@cross_origin(origins=["https://treasure-385205.uc.r.appspot.com/", "http://localhost:3000"])
 def whisper():
     if 'audio' not in request.files:
         return 'No audio file in request', 400
@@ -60,6 +61,14 @@ def whisper():
     os.makedirs(app.config['AUDIO_FOLDER'], exist_ok=True)
     save_path = os.path.join(app.config['AUDIO_FOLDER'], filename)
     audio_file.save(save_path)
+    # # Create a new blob (i.e., a new object) in the bucket
+    # blob = bucket.blob(f'{app.config["AUDIO_FOLDER"]}/{filename}')
+
+    # # Upload the audio file
+    # blob.upload_from_file(audio_file)
+
+    # # Get the public URL of the uploaded file
+    # gcs_url = blob.public_url
 
     # Extract additional information
     language = request.form.get('language')
@@ -69,6 +78,7 @@ def whisper():
         transcribed_text = audio_to_text(save_path, language)
         return jsonify(transcribed_text)
     except Exception as e:
+        print("An error occurred: %s", e)
         return str(e), 500
 
 @app.route('/chat', methods=['POST'])
@@ -102,14 +112,15 @@ def summary():
 #     data = request.get_json()
 #     return feedback(data['data'])
 
-# # this is for deployment
-# if __name__ == "__main__":
-#     app.debug = False
-#     PORT = os.environ.get('PORT', '5000')
-#     serve(app, host='0.0.0.0', port=PORT)
-
-# this is for your local environment
 if __name__ == "__main__":
-    app.debug = True
-    PORT = os.environ.get('PORT', '5000')
-    app.run()
+    PORT = os.environ.get('PORT','5000')
+
+    # Check if we're in deployment mode
+    # Run this command in the terminal to set the environment variable:
+    # export DEPLOYMENT_MODE=production
+    # if os.environ.get('DEPLOYMENT_MODE') == 'production':
+    app.debug = False
+    serve(app, host='0.0.0.0', port=PORT)
+    # else:
+    # app.debug = True
+    # app.run(host='0.0.0.0', port=PORT)
